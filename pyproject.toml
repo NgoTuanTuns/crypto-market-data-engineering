@@ -12,3 +12,10 @@ dependencies = [
     "websocket>=0.2.1",
     "websocket-client>=1.9.2",
 ]
+[dependency-groups]
+ingestion = ["websocket-client", "azure-eventhub"]
+ml = ["pandas", "scikit-learn", "mlflow"]
+rag = []
+dashboard = ["streamlit"]
+airflow = ["requests", "python-dotenv"]
+dev = ["pytest", "ruff"]
