@@ -13,7 +13,7 @@ load_dotenv()
 
 PARTITION_IDS = {'BINANCE:BTCUSDT':'0', 'BINANCE:ETHUSDT':'1', 'BINANCE:BNBUSDT':'2', "BINANCE:AVAXUSDT":'3', "BINANCE:LTCUSDT":"4"}
 FINNHUB_KEY = (os.getenv("FINNHUB_API_KEY") or "").strip()
-EH_CONN = (os.getenv("EVENT_HUB_CONNECTION_STR") or "").strip()
+EH_CONN = (os.getenv("EVENT_HUB_CONNECTION_STR_PRODUCER") or "").strip()
 if not FINNHUB_KEY or not EH_CONN:
     sys.exit("FINNHUB_API_KEY or EVENTHUB_CONNECTION_STRING were not found")
 
