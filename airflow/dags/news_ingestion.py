@@ -64,7 +64,7 @@ def upload_to_adls(ds, logical_date, **context):
     except Exception as e:
         print(f"Filesystem might have some errors: {e}")
 
-    remote_path = f"news/{ds}/{hour_str}.jsonl"
+    remote_path = f"news/{ds}_{hour_str}.jsonl"
     hook.upload_file(
         file_system_name=ADLS_FILESYSTEM,
         file_name=remote_path,

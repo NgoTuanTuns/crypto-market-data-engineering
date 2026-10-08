@@ -74,7 +74,7 @@ async def upload_rows_to_adls(rows: list[dict]):
         except Exception as e:
             print(f"Filesystem might have an error: {e}", flush=True)
 
-        remote_path = f"candles/{now:%Y-%m-%d}/{now:%H%M%S}.jsonl"
+        remote_path = f"candles/{now:%Y-%m-%d}_{now:%H%M%S}.jsonl"
         file_client = fs_client.get_file_client(remote_path)
         with open(local_path, "rb") as f:
             data = f.read()
