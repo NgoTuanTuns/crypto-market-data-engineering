@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "name": "source",
+    "path": "/Files",
+    "target": {
+      "type": "AdlsGen2",
+      "adlsGen2": {
+        "connectionId": "f4f0b356-345f-4583-ad93-035192cf3c3f",
+        "location": "https://adls2crypto.dfs.core.windows.net",
+        "subpath": "/source"
+      }
+    }
+  }
+]
