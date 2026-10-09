@@ -12,7 +12,7 @@ load_dotenv()
 LOCAL_TMP_DIR = LOCAL_TMP_DIR = Path("/tmp/news")
 ADLS_PATH_TEMPLATE = "news/{ds}.jsonl"
 ADLS_FILESYSTEM = 'source'
-FINNHUB_API_KEY = os.getenv('FINNHUB_API_KEY')
+FINNHUB_API_KEY = (os.getenv('FINNHUB_API_KEY') or "").strip()
 CRYPTO_KEYWORDS = {
     "BTC": ["bitcoin", "btc"],
     "ETH": ["ethereum", "eth"],
@@ -55,7 +55,7 @@ def upload_to_adls(ds, logical_date, **context):
     hour_str = logical_date.strftime("%H")
     local_path = LOCAL_TMP_DIR / ds / f"{hour_str}.jsonl"
     if not local_path.exists():
-        print(f"{local_path} not found, skip")
+        print(f"{local_path} is not found, skip")
         return
 
     hook = AzureDataLakeStorageV2Hook(adls_conn_id='adls2_connection')
