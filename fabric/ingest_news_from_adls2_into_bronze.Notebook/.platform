@@ -2,10 +2,10 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
   "metadata": {
     "type": "Notebook",
-    "displayName": "ingest_data_from_adls2"
+    "displayName": "ingest_news_from_adls2_into_bronze"
   },
   "config": {
     "version": "2.0",
-    "logicalId": "94be2a98-57f7-bbb9-4c44-b1f892d20766"
+    "logicalId": "5afa59e9-6729-8134-4b2e-fbd62adac014"
   }
 }

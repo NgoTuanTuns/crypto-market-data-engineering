@@ -22,9 +22,10 @@
 
 # CELL ********************
 
-from pyspark.sql.types import *
+from pyspark.sql.types import StructType, StructField, StringType, LongType, DoubleType
+from pyspark.sql.functions import current_timestamp, input_file_name, regexp_extract
 
-candles_schema = StructType([StructField('close', DoubleType(), True), 
+schema = StructType([StructField('close', DoubleType(), True), 
                     StructField('high', DoubleType(), True), 
                     StructField('interval', StringType(), True), 
                     StructField('low', DoubleType(), True), 
@@ -35,8 +36,8 @@ candles_schema = StructType([StructField('close', DoubleType(), True),
                     StructField('trades', LongType(), True), 
                     StructField('volume', DoubleType(), True)])
 
-checkpoint_path = 'Files/checkpoint'
-
+SOURCE_PATH = 'Files/source/candles'
+CHECKPOINT_PATH = 'Files/checkpoint/candles/source_to_bronze'
 
 # METADATA ********************
 
@@ -47,19 +48,24 @@ checkpoint_path = 'Files/checkpoint'
 
 # CELL ********************
 
-df_candles = (
+df = (
     spark.readStream
-    .schema(candles_schema)
+    .schema(schema)
     .option("maxFilesPerTrigger", 1)
-    .json("Files/source/candles")
+    .json(SOURCE_PATH)
 )
 
-candles_stream = df_candles.writeStream\
-                    .format('delta')\
-                    .outputMode('append')\
-                    .option('checkpointLocation', checkpoint_path)\
-                    .start('Tables/bronze/candles')
-                    
+df.withColumn('_ingestion_at', current_timestamp())\
+    .withColumn('_from_source', regexp_extract(input_file_name(), r"(Files/.*)", 1))
+
+query = (
+        df.writeStream
+            .format('delta')
+            .outputMode('append')
+            .option('checkpointLocation', CHECKPOINT_PATH)
+            .start('Tables/bronze/candles')
+)                    
+
 
 # METADATA ********************
 
