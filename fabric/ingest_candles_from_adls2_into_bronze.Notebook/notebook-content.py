@@ -55,7 +55,7 @@ df = (
     .json(SOURCE_PATH)
 )
 
-df.withColumn('_ingestion_at', current_timestamp())\
+df = df.withColumn('_ingestion_at', current_timestamp())\
     .withColumn('_from_source', regexp_extract(input_file_name(), r"(Files/.*)", 1))
 
 query = (
