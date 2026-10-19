@@ -1,0 +1,114 @@
+# Fabric notebook source
+
+# METADATA ********************
+
+# META {
+# META   "kernel_info": {
+# META     "name": "synapse_pyspark"
+# META   },
+# META   "dependencies": {
+# META     "lakehouse": {
+# META       "default_lakehouse": "7494be6e-6123-4648-8b0c-15947d86a69a",
+# META       "default_lakehouse_name": "crypto",
+# META       "default_lakehouse_workspace_id": "bc9c9e37-b69a-4c99-a276-20bdfd99eb01",
+# META       "known_lakehouses": [
+# META         {
+# META           "id": "7494be6e-6123-4648-8b0c-15947d86a69a"
+# META         }
+# META       ]
+# META     }
+# META   }
+# META }
+
+# CELL ********************
+
+import pyspark.sql.functions as F
+from pyspark.sql import Window
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+df = spark.readStream.table('bronze.sentiment')
+
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+df_critical_null = df.withColumn(
+    '_is_critical_null',
+    F.col('url').isNull() | F.col('title').isNull() | F.col('published_date').isNull()
+)
+
+df_description_null_handling = df_critical_null.withColumn(
+    'description',
+    F.when(F.col('description').isNull() | (F.col('description') == ""), F.col('title'))
+     .otherwise(F.col('description'))
+)
+
+df_published_date = df_description_null_handling.withColumn('published_date', F.to_timestamp(F.col('published_date')))
+
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+def upsert_to_silver(batch_df, batch_id):
+    spark_session = batch_df.sparkSession
+    invalid = batch_df.filter(F.col('_is_critical_null')).drop('_is_critical_null')
+    valid = batch_df.filter(~F.col('_is_critical_null')).drop('_is_critical_null')
+
+    invalid.write.format('delta').mode('append').saveAsTable('bronze.sentiment_quarantine')
+
+    if not spark_session.catalog.tableExists('silver.sentiment'):
+        (
+            valid.limit(0)
+            .write.format('delta')
+            .saveAsTable('silver.sentiment')
+        )
+    w = Window.partitionBy("url").orderBy(F.col("_ingestion_at").desc())
+    valid_dedup = valid.withColumn('_rn', F.row_number().over(w)).filter(F.col('_rn') == 1).drop('_rn')
+
+    valid_dedup.createOrReplaceTempView('updates')
+    spark_session.sql("""
+        MERGE INTO silver.sentiment AS TARGET
+        USING updates AS SOURCE
+        ON TARGET.url = SOURCE.url
+        WHEN NOT MATCHED THEN INSERT *
+    """)
+
+try:
+    query = (
+        df_published_date.writeStream
+        .foreachBatch(upsert_to_silver)
+        .option("checkpointLocation", "Files/checkpoint/sentiment/bronze_to_silver")
+        .trigger(availableNow=True)
+        .start()
+    )
+    query.awaitTermination()
+except Exception as e:
+    import traceback
+    traceback.print_exc()
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
