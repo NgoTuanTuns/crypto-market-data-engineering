@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "candles_loading"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "8d1e25a6-a19b-9ddb-4111-188bc47fb95a"
+  }
+}
