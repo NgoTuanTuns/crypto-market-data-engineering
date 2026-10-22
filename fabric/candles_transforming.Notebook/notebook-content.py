@@ -55,19 +55,19 @@ CHECKPOINT_PATH = 'Files/checkpoint/candles/source_to_bronze'
 df = (
     spark.readStream
     .schema(schema)
-    .option("maxFilesPerTrigger", 1)
+    .option("maxFilesPerTrigger", 10)
     .json(SOURCE_PATH)
 )
 
 df = df.withColumn('_ingestion_at', F.current_timestamp())\
     .withColumn('_from_source', F.regexp_extract(F.input_file_name(), r"(Files/.*)", 1))
 
-query = (
-        df.writeStream
-            .format('delta')
-            .outputMode('append')
-            .option('checkpointLocation', CHECKPOINT_PATH)
-            .start('Tables/bronze/candles')
+query_bronze = (
+    df.writeStream
+        .format('delta')
+        .outputMode('append')
+        .option('checkpointLocation', CHECKPOINT_PATH)
+        .start('Tables/bronze/candles')
 )                    
 
 
@@ -151,17 +151,15 @@ def upsert_to_silver(batch_df, batch_id):
     """)
 
 
-try:
-    query = (
-        df_cleaned.writeStream
-        .foreachBatch(upsert_to_silver)
-        .option("checkpointLocation", "Files/checkpoint/candles/bronze_to_silver")
-        .start()
-    )
-    query.awaitTermination()
-except Exception as e:
-    import traceback
-    traceback.print_exc()
+
+query_silver = (
+    df_cleaned.writeStream
+    .foreachBatch(upsert_to_silver)
+    .option("checkpointLocation", "Files/checkpoint/candles/bronze_to_silver")
+    .start()
+)
+
+spark.streams.awaitAnyTermination()
 
 # METADATA ********************
 
