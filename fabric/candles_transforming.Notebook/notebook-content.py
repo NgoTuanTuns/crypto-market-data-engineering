@@ -24,7 +24,24 @@
 
 import pyspark.sql.functions as F
 from pyspark.sql import Window
-df_bronze = spark.readStream.table('bronze.candles')
+from pyspark.sql.types import StructType, StructField, StringType, LongType, DoubleType
+
+
+schema = StructType([StructField('close', DoubleType(), True), 
+                    StructField('high', DoubleType(), True), 
+                    StructField('interval', StringType(), True), 
+                    StructField('low', DoubleType(), True), 
+                    StructField('minute_ms', LongType(), True), 
+                    StructField('open', DoubleType(), True), 
+                    StructField('source', StringType(), True), 
+                    StructField('symbol', StringType(), True), 
+                    StructField('trades', LongType(), True), 
+                    StructField('volume', DoubleType(), True)])
+
+SOURCE_PATH = 'Files/source/candles'
+CHECKPOINT_PATH = 'Files/checkpoint/candles/source_to_bronze'
+
+
 
 # METADATA ********************
 
@@ -35,7 +52,36 @@ df_bronze = spark.readStream.table('bronze.candles')
 
 # CELL ********************
 
-df_cleaned = (
+df = (
+    spark.readStream
+    .schema(schema)
+    .option("maxFilesPerTrigger", 1)
+    .json(SOURCE_PATH)
+)
+
+df = df.withColumn('_ingestion_at', F.current_timestamp())\
+    .withColumn('_from_source', F.regexp_extract(F.input_file_name(), r"(Files/.*)", 1))
+
+query = (
+        df.writeStream
+            .format('delta')
+            .outputMode('append')
+            .option('checkpointLocation', CHECKPOINT_PATH)
+            .start('Tables/bronze/candles')
+)                    
+
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+df_bronze = spark.readStream.table('bronze.candles')
+df_critical_null_handling = (
     df_bronze.withColumn('_is_critical_null',
         F.col('close').isNull() | F.col('high').isNull() |
         F.col('low').isNull() | F.col('open').isNull() |
@@ -44,7 +90,7 @@ df_cleaned = (
         .withColumn("trades", F.when(F.col("trades").isNull(), 0).otherwise(F.col("trades")))
 )
 
-df_typed = (df_cleaned
+df_typed = (df_critical_null_handling
     .withColumn("minute_ts", (F.col("minute_ms") / 1000).cast("timestamp"))
     .withColumn("_is_valid_ohlc", 
         (F.col('low') <= F.col('open')) & (F.col('low') <= F.col('close')) &
@@ -52,7 +98,13 @@ df_typed = (df_cleaned
         (F.col('high') >= F.col('low')))
 )
 
-df_typed = df_typed.withColumn("date", F.col("minute_ts").cast("date"))
+df_date_mismatch_handling = df_typed.withColumn("date", F.col("minute_ts").cast("date"))
+df_cleaned = (
+    df_date_mismatch_handling
+    .withColumn("exchange", F.split(F.col("symbol"), ":").getItem(0))
+    .withColumn("pair", F.split(F.col("symbol"), ":").getItem(1))
+    .withColumn("base_asset", F.regexp_extract(F.col("pair"), r"^(.*)USDT$", 1))
+)
 
 
 # METADATA ********************
@@ -101,7 +153,7 @@ def upsert_to_silver(batch_df, batch_id):
 
 try:
     query = (
-        df_typed.writeStream
+        df_cleaned.writeStream
         .foreachBatch(upsert_to_silver)
         .option("checkpointLocation", "Files/checkpoint/candles/bronze_to_silver")
         .start()
