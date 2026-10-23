@@ -46,7 +46,9 @@ df = spark.readStream.table('bronze.sentiment')
 
 # CELL ********************
 
-df_critical_null = df.withColumn(
+df_published_date = df.withColumn('published_date', F.to_timestamp(F.col('published_date')))
+
+df_critical_null = df_published_date.withColumn(
     '_is_critical_null',
     F.col('url').isNull() | F.col('title').isNull() | F.col('published_date').isNull()
 )
@@ -56,8 +58,6 @@ df_description_null_handling = df_critical_null.withColumn(
     F.when(F.col('description').isNull() | (F.col('description') == ""), F.col('title'))
      .otherwise(F.col('description'))
 )
-
-df_published_date = df_description_null_handling.withColumn('published_date', F.to_timestamp(F.col('published_date')))
 
 
 # METADATA ********************
@@ -95,7 +95,7 @@ def upsert_to_silver(batch_df, batch_id):
 
 try:
     query = (
-        df_published_date.writeStream
+        df_description_null_handling.writeStream
         .foreachBatch(upsert_to_silver)
         .option("checkpointLocation", "Files/checkpoint/sentiment/bronze_to_silver")
         .trigger(availableNow=True)
