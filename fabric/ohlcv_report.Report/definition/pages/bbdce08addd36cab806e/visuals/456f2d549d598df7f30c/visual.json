@@ -1,0 +1,160 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "456f2d549d598df7f30c",
+  "position": {
+    "x": 1005.6720554272518,
+    "y": 234.88485648300892,
+    "z": 1002,
+    "height": 428.72187396898715,
+    "width": 914.45463543385029,
+    "tabOrder": 1002
+  },
+  "visual": {
+    "visualType": "columnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "ohlcv_daily"
+                    }
+                  },
+                  "Property": "symbol"
+                }
+              },
+              "queryRef": "ohlcv_daily.symbol",
+              "nativeQueryRef": "symbol",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "ohlcv_daily"
+                        }
+                      },
+                      "Property": "day_volume"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(ohlcv_daily.day_volume)",
+              "nativeQueryRef": "Sum of day_volume"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "ohlcv_daily"
+                        }
+                      },
+                      "Property": "day_trades"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(ohlcv_daily.day_trades)",
+              "nativeQueryRef": "Sum of day_trades"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Aggregation": {
+                "Expression": {
+                  "Column": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "ohlcv_daily"
+                      }
+                    },
+                    "Property": "day_volume"
+                  }
+                },
+                "Function": 0
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "e067c9c16d0efabf3d8d",
+        "field": {
+          "Aggregation": {
+            "Expression": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "ohlcv_daily"
+                  }
+                },
+                "Property": "day_volume"
+              }
+            },
+            "Function": 0
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "32bd48f17d939b7cd644",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "ohlcv_daily"
+              }
+            },
+            "Property": "symbol"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "01d74e008b5439b338ab",
+        "field": {
+          "Aggregation": {
+            "Expression": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "ohlcv_daily"
+                  }
+                },
+                "Property": "day_trades"
+              }
+            },
+            "Function": 0
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
+  }
+}

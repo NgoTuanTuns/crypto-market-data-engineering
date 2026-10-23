@@ -1,0 +1,95 @@
+table ohlcv_daily
+	lineageTag: b0d54d6c-ae30-4e24-9478-f729d6127454
+	sourceLineageTag: [gold].[ohlcv_daily]
+
+	column symbol
+		dataType: string
+		lineageTag: 89f1b43a-cf88-456d-bb74-6d5b1d25d596
+		sourceLineageTag: symbol
+		summarizeBy: none
+		sourceColumn: symbol
+
+		annotation SummarizationSetBy = Automatic
+
+	column date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 91140501-7828-4aaf-b029-7bb54d4cc10d
+		sourceLineageTag: date
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation SummarizationSetBy = Automatic
+
+	column day_high
+		dataType: double
+		lineageTag: 9f009510-05a3-47aa-8a57-ff1e5361d8ca
+		sourceLineageTag: day_high
+		summarizeBy: sum
+		sourceColumn: day_high
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column day_low
+		dataType: double
+		lineageTag: 7490fd70-86f6-49d7-87e0-3569f1f5cb6f
+		sourceLineageTag: day_low
+		summarizeBy: sum
+		sourceColumn: day_low
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column day_volume
+		dataType: double
+		lineageTag: 4dd078c8-df8f-4747-aa0e-edfb239118eb
+		sourceLineageTag: day_volume
+		summarizeBy: sum
+		sourceColumn: day_volume
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column day_trades
+		dataType: int64
+		formatString: 0
+		lineageTag: 09d7d9e5-06b9-4179-a06a-df333e8681cc
+		sourceLineageTag: day_trades
+		summarizeBy: sum
+		sourceColumn: day_trades
+
+		annotation SummarizationSetBy = Automatic
+
+	column day_open
+		dataType: double
+		lineageTag: 583fe390-6981-468e-b752-f5964f3bba8c
+		sourceLineageTag: day_open
+		summarizeBy: sum
+		sourceColumn: day_open
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column day_close
+		dataType: double
+		lineageTag: a173244f-20cc-4f69-b852-979f5fd3940e
+		sourceLineageTag: day_close
+		summarizeBy: sum
+		sourceColumn: day_close
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition ohlcv_daily = entity
+		mode: directLake
+		source
+			entityName: ohlcv_daily
+			schemaName: gold
+			expressionSource: 'DirectLake - crypto'
+

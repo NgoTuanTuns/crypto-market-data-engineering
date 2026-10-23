@@ -1,0 +1,266 @@
+table ohlcv_1m_features
+	lineageTag: cefd0235-b6b3-4d55-a11e-fea0d5ea83b3
+	sourceLineageTag: [gold].[ohlcv_1m_features]
+
+	column close
+		dataType: double
+		lineageTag: 4259acd9-f9d5-4c22-975b-75d567f78ed2
+		sourceLineageTag: close
+		summarizeBy: sum
+		sourceColumn: close
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column high
+		dataType: double
+		lineageTag: acc19cc1-c1f4-425a-9bea-8c77ea328f88
+		sourceLineageTag: high
+		summarizeBy: sum
+		sourceColumn: high
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column interval
+		dataType: string
+		lineageTag: 63385c28-3e7f-4575-8454-4db1322972bb
+		sourceLineageTag: interval
+		summarizeBy: none
+		sourceColumn: interval
+
+		annotation SummarizationSetBy = Automatic
+
+	column low
+		dataType: double
+		lineageTag: 8e9e1082-0796-4648-b740-4fb178fe7e9b
+		sourceLineageTag: low
+		summarizeBy: sum
+		sourceColumn: low
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column minute_ms
+		dataType: int64
+		formatString: 0
+		lineageTag: ce8c5ba5-e005-4b55-b837-d8a215b2b99d
+		sourceLineageTag: minute_ms
+		summarizeBy: sum
+		sourceColumn: minute_ms
+
+		annotation SummarizationSetBy = Automatic
+
+	column open
+		dataType: double
+		lineageTag: 357b90aa-06e9-4606-9ded-9af4d4cdc96f
+		sourceLineageTag: open
+		summarizeBy: sum
+		sourceColumn: open
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column source
+		dataType: string
+		lineageTag: 9c87741e-8482-4234-a0d9-c107cd201b3e
+		sourceLineageTag: source
+		summarizeBy: none
+		sourceColumn: source
+
+		annotation SummarizationSetBy = Automatic
+
+	column symbol
+		dataType: string
+		lineageTag: 1f063206-57e3-4a05-a1a9-5f3d9c939452
+		sourceLineageTag: symbol
+		summarizeBy: none
+		sourceColumn: symbol
+
+		annotation SummarizationSetBy = Automatic
+
+	column trades
+		dataType: int64
+		formatString: 0
+		lineageTag: d78f82a5-45ea-43a0-9feb-bc59fd08f35a
+		sourceLineageTag: trades
+		summarizeBy: sum
+		sourceColumn: trades
+
+		annotation SummarizationSetBy = Automatic
+
+	column volume
+		dataType: double
+		lineageTag: 9b5c2271-cc69-49ff-89d4-36a361612f14
+		sourceLineageTag: volume
+		summarizeBy: sum
+		sourceColumn: volume
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column _ingestion_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: cee1781c-5678-4e6e-94d8-32e2ab49bc7c
+		sourceLineageTag: _ingestion_at
+		summarizeBy: none
+		sourceColumn: _ingestion_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column _from_source
+		dataType: string
+		lineageTag: d96765af-cc45-49ff-8b4d-b18f4e9a4a91
+		sourceLineageTag: _from_source
+		summarizeBy: none
+		sourceColumn: _from_source
+
+		annotation SummarizationSetBy = Automatic
+
+	column minute_ts
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 3a75ffd8-dc4c-4385-840c-8ceaa578335e
+		sourceLineageTag: minute_ts
+		summarizeBy: none
+		sourceColumn: minute_ts
+
+		annotation SummarizationSetBy = Automatic
+
+	column _is_valid_ohlc
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: ceb8d7a6-dd1e-4023-8635-d7e76bba28cb
+		sourceLineageTag: _is_valid_ohlc
+		summarizeBy: none
+		sourceColumn: _is_valid_ohlc
+
+		annotation SummarizationSetBy = Automatic
+
+	column date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: dc186acd-e6d7-4f51-b10c-7f9aceb0ffcb
+		sourceLineageTag: date
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation SummarizationSetBy = Automatic
+
+	column exchange
+		dataType: string
+		lineageTag: f3638f0b-fd10-4470-85d1-3ea0d6453a10
+		sourceLineageTag: exchange
+		summarizeBy: none
+		sourceColumn: exchange
+
+		annotation SummarizationSetBy = Automatic
+
+	column pair
+		dataType: string
+		lineageTag: 4127edf7-aea1-4e6f-9245-95659cb621e3
+		sourceLineageTag: pair
+		summarizeBy: none
+		sourceColumn: pair
+
+		annotation SummarizationSetBy = Automatic
+
+	column base_asset
+		dataType: string
+		lineageTag: 3f1a0fb0-892f-4852-8a83-2374569fd7ac
+		sourceLineageTag: base_asset
+		summarizeBy: none
+		sourceColumn: base_asset
+
+		annotation SummarizationSetBy = Automatic
+
+	column return
+		dataType: double
+		lineageTag: 461ff527-e059-4921-8cbc-64a602568a66
+		sourceLineageTag: return
+		summarizeBy: sum
+		sourceColumn: return
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column prev_close
+		dataType: double
+		lineageTag: 47deb16a-2962-495c-bb8a-da1b6d015d89
+		sourceLineageTag: prev_close
+		summarizeBy: sum
+		sourceColumn: prev_close
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column return_vs_prev
+		dataType: double
+		lineageTag: e396d458-cb13-41b2-8db9-ef5cd8d42df9
+		sourceLineageTag: return_vs_prev
+		summarizeBy: sum
+		sourceColumn: return_vs_prev
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ma5
+		dataType: double
+		lineageTag: 4dbff9d6-0b1f-41d7-9202-526218860912
+		sourceLineageTag: ma5
+		summarizeBy: sum
+		sourceColumn: ma5
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ma15
+		dataType: double
+		lineageTag: 26e7661c-f01f-440b-a31f-6ad560868a68
+		sourceLineageTag: ma15
+		summarizeBy: sum
+		sourceColumn: ma15
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column volatility5
+		dataType: double
+		lineageTag: 3b7f4429-6df8-4bcd-940b-ea8fef1cec99
+		sourceLineageTag: volatility5
+		summarizeBy: sum
+		sourceColumn: volatility5
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column typical_price
+		dataType: double
+		lineageTag: d4cbb2d2-f047-4113-9ea2-9638b9fbd2f2
+		sourceLineageTag: typical_price
+		summarizeBy: sum
+		sourceColumn: typical_price
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition ohlcv_1m_features = entity
+		mode: directLake
+		source
+			entityName: ohlcv_1m_features
+			schemaName: gold
+			expressionSource: 'DirectLake - crypto'
+

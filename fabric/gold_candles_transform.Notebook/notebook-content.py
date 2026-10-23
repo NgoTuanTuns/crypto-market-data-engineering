@@ -58,7 +58,7 @@ df_features = (
     .partitionBy("date")
     .saveAsTable("gold.ohlcv_1m_features")
 )
-
+spark.sql("OPTIMIZE gold.ohlcv_1m_features ZORDER BY (symbol, minute_ts)")
 df_features_snapshot = df_features.withColumn("_computed_at", F.current_timestamp())
 
 (
@@ -110,6 +110,19 @@ df_ohlcv_daily = (
 )
 
 df_ohlcv_daily.write.format("delta").mode("overwrite").saveAsTable("gold.ohlcv_daily")
+spark.sql("OPTIMIZE gold.ohlcv_daily ZORDER BY (symbol, date)")
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+df = spark.read.table('gold.ohlcv_1m_features')
+display(df)
 
 # METADATA ********************
 
