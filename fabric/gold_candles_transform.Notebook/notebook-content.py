@@ -107,22 +107,11 @@ df_ohlcv_daily = (
     df_agg
     .join(df_open, ["symbol", "date"])
     .join(df_close, ["symbol", "date"])
+    .withColumn("base_asset", F.regexp_extract(F.split("symbol", ":").getItem(1), r"^(.*)USDT$", 1))
 )
 
 df_ohlcv_daily.write.format("delta").mode("overwrite").saveAsTable("gold.ohlcv_daily")
 spark.sql("OPTIMIZE gold.ohlcv_daily ZORDER BY (symbol, date)")
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# CELL ********************
-
-df = spark.read.table('gold.ohlcv_1m_features')
-display(df)
 
 # METADATA ********************
 
