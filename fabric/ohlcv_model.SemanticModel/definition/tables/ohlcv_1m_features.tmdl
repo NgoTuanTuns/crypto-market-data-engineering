@@ -1,10 +1,10 @@
 table ohlcv_1m_features
-	lineageTag: cefd0235-b6b3-4d55-a11e-fea0d5ea83b3
+	lineageTag: 4300e86c-8490-40c2-b2f3-802dc1635c0d
 	sourceLineageTag: [gold].[ohlcv_1m_features]
 
 	column close
 		dataType: double
-		lineageTag: 4259acd9-f9d5-4c22-975b-75d567f78ed2
+		lineageTag: 46389cac-efb1-4a3e-ad68-8bd3fd13c0f3
 		sourceLineageTag: close
 		summarizeBy: sum
 		sourceColumn: close
@@ -15,7 +15,7 @@ table ohlcv_1m_features
 
 	column high
 		dataType: double
-		lineageTag: acc19cc1-c1f4-425a-9bea-8c77ea328f88
+		lineageTag: b5c69794-d7a7-4d0e-b7d7-a1eb6c18533d
 		sourceLineageTag: high
 		summarizeBy: sum
 		sourceColumn: high
@@ -26,7 +26,7 @@ table ohlcv_1m_features
 
 	column interval
 		dataType: string
-		lineageTag: 63385c28-3e7f-4575-8454-4db1322972bb
+		lineageTag: 68ca3ef3-243e-43c3-9de3-6680a2b2a152
 		sourceLineageTag: interval
 		summarizeBy: none
 		sourceColumn: interval
@@ -35,7 +35,7 @@ table ohlcv_1m_features
 
 	column low
 		dataType: double
-		lineageTag: 8e9e1082-0796-4648-b740-4fb178fe7e9b
+		lineageTag: 98891b47-5184-4137-b92b-f4314d1a4820
 		sourceLineageTag: low
 		summarizeBy: sum
 		sourceColumn: low
@@ -47,7 +47,7 @@ table ohlcv_1m_features
 	column minute_ms
 		dataType: int64
 		formatString: 0
-		lineageTag: ce8c5ba5-e005-4b55-b837-d8a215b2b99d
+		lineageTag: 7f4ad92d-4b81-4b40-ae52-e2394ed7f565
 		sourceLineageTag: minute_ms
 		summarizeBy: sum
 		sourceColumn: minute_ms
@@ -56,7 +56,7 @@ table ohlcv_1m_features
 
 	column open
 		dataType: double
-		lineageTag: 357b90aa-06e9-4606-9ded-9af4d4cdc96f
+		lineageTag: 1278a741-2b7b-4ec5-824c-c070ff45bc4d
 		sourceLineageTag: open
 		summarizeBy: sum
 		sourceColumn: open
@@ -67,7 +67,7 @@ table ohlcv_1m_features
 
 	column source
 		dataType: string
-		lineageTag: 9c87741e-8482-4234-a0d9-c107cd201b3e
+		lineageTag: 1f5c08de-c269-4245-a7c9-cbb4469c9d4a
 		sourceLineageTag: source
 		summarizeBy: none
 		sourceColumn: source
@@ -76,7 +76,7 @@ table ohlcv_1m_features
 
 	column symbol
 		dataType: string
-		lineageTag: 1f063206-57e3-4a05-a1a9-5f3d9c939452
+		lineageTag: 313e8277-00bd-493d-97b3-46054addd140
 		sourceLineageTag: symbol
 		summarizeBy: none
 		sourceColumn: symbol
@@ -86,7 +86,7 @@ table ohlcv_1m_features
 	column trades
 		dataType: int64
 		formatString: 0
-		lineageTag: d78f82a5-45ea-43a0-9feb-bc59fd08f35a
+		lineageTag: ceb1db93-cbbc-4cac-9854-7238d019cf62
 		sourceLineageTag: trades
 		summarizeBy: sum
 		sourceColumn: trades
@@ -95,7 +95,7 @@ table ohlcv_1m_features
 
 	column volume
 		dataType: double
-		lineageTag: 9b5c2271-cc69-49ff-89d4-36a361612f14
+		lineageTag: 5255dae9-935d-4d93-b42f-d1bb181eccbd
 		sourceLineageTag: volume
 		summarizeBy: sum
 		sourceColumn: volume
@@ -107,7 +107,7 @@ table ohlcv_1m_features
 	column _ingestion_at
 		dataType: dateTime
 		formatString: General Date
-		lineageTag: cee1781c-5678-4e6e-94d8-32e2ab49bc7c
+		lineageTag: f6d2438a-6b27-4fa4-81db-62cbaf6ba1cb
 		sourceLineageTag: _ingestion_at
 		summarizeBy: none
 		sourceColumn: _ingestion_at
@@ -116,7 +116,7 @@ table ohlcv_1m_features
 
 	column _from_source
 		dataType: string
-		lineageTag: d96765af-cc45-49ff-8b4d-b18f4e9a4a91
+		lineageTag: 25be33d6-1609-4db3-a86b-2858b62ed398
 		sourceLineageTag: _from_source
 		summarizeBy: none
 		sourceColumn: _from_source
@@ -126,7 +126,7 @@ table ohlcv_1m_features
 	column minute_ts
 		dataType: dateTime
 		formatString: General Date
-		lineageTag: 3a75ffd8-dc4c-4385-840c-8ceaa578335e
+		lineageTag: d760827b-1c63-40b3-ad78-705cfd97e6a9
 		sourceLineageTag: minute_ts
 		summarizeBy: none
 		sourceColumn: minute_ts
@@ -136,7 +136,7 @@ table ohlcv_1m_features
 	column _is_valid_ohlc
 		dataType: boolean
 		formatString: """TRUE"";""TRUE"";""FALSE"""
-		lineageTag: ceb8d7a6-dd1e-4023-8635-d7e76bba28cb
+		lineageTag: 83b71ef2-7f94-489e-80e8-61ea2b269720
 		sourceLineageTag: _is_valid_ohlc
 		summarizeBy: none
 		sourceColumn: _is_valid_ohlc
@@ -146,7 +146,7 @@ table ohlcv_1m_features
 	column date
 		dataType: dateTime
 		formatString: General Date
-		lineageTag: dc186acd-e6d7-4f51-b10c-7f9aceb0ffcb
+		lineageTag: c8175f64-cffe-4af0-8d92-78aa88737409
 		sourceLineageTag: date
 		summarizeBy: none
 		sourceColumn: date
@@ -155,7 +155,7 @@ table ohlcv_1m_features
 
 	column exchange
 		dataType: string
-		lineageTag: f3638f0b-fd10-4470-85d1-3ea0d6453a10
+		lineageTag: 008991db-38bc-45f6-a5a8-78b7c156c18b
 		sourceLineageTag: exchange
 		summarizeBy: none
 		sourceColumn: exchange
@@ -164,7 +164,7 @@ table ohlcv_1m_features
 
 	column pair
 		dataType: string
-		lineageTag: 4127edf7-aea1-4e6f-9245-95659cb621e3
+		lineageTag: 47e46075-5068-4c7f-9c3b-a21e61c401ef
 		sourceLineageTag: pair
 		summarizeBy: none
 		sourceColumn: pair
@@ -173,7 +173,7 @@ table ohlcv_1m_features
 
 	column base_asset
 		dataType: string
-		lineageTag: 3f1a0fb0-892f-4852-8a83-2374569fd7ac
+		lineageTag: 3ee9fabc-e9f7-45b9-9f87-b48cf9999459
 		sourceLineageTag: base_asset
 		summarizeBy: none
 		sourceColumn: base_asset
@@ -182,7 +182,7 @@ table ohlcv_1m_features
 
 	column return
 		dataType: double
-		lineageTag: 461ff527-e059-4921-8cbc-64a602568a66
+		lineageTag: c027fb83-c7b3-4cb1-a924-7a13e7569ab2
 		sourceLineageTag: return
 		summarizeBy: sum
 		sourceColumn: return
@@ -193,7 +193,7 @@ table ohlcv_1m_features
 
 	column prev_close
 		dataType: double
-		lineageTag: 47deb16a-2962-495c-bb8a-da1b6d015d89
+		lineageTag: 30f4234d-738c-4a62-b82b-98e2ab2be95e
 		sourceLineageTag: prev_close
 		summarizeBy: sum
 		sourceColumn: prev_close
@@ -204,7 +204,7 @@ table ohlcv_1m_features
 
 	column return_vs_prev
 		dataType: double
-		lineageTag: e396d458-cb13-41b2-8db9-ef5cd8d42df9
+		lineageTag: b3cd5898-9c33-4105-8157-f851310f6fb1
 		sourceLineageTag: return_vs_prev
 		summarizeBy: sum
 		sourceColumn: return_vs_prev
@@ -215,7 +215,7 @@ table ohlcv_1m_features
 
 	column ma5
 		dataType: double
-		lineageTag: 4dbff9d6-0b1f-41d7-9202-526218860912
+		lineageTag: 1ab83151-fc36-4f1c-b935-c0b1b1f78b52
 		sourceLineageTag: ma5
 		summarizeBy: sum
 		sourceColumn: ma5
@@ -226,7 +226,7 @@ table ohlcv_1m_features
 
 	column ma15
 		dataType: double
-		lineageTag: 26e7661c-f01f-440b-a31f-6ad560868a68
+		lineageTag: 42a99291-2b98-4545-a48a-ac4f48cf94c2
 		sourceLineageTag: ma15
 		summarizeBy: sum
 		sourceColumn: ma15
@@ -237,7 +237,7 @@ table ohlcv_1m_features
 
 	column volatility5
 		dataType: double
-		lineageTag: 3b7f4429-6df8-4bcd-940b-ea8fef1cec99
+		lineageTag: 82d235d5-91f1-42a0-9dee-7c01bcd4d151
 		sourceLineageTag: volatility5
 		summarizeBy: sum
 		sourceColumn: volatility5
@@ -248,7 +248,7 @@ table ohlcv_1m_features
 
 	column typical_price
 		dataType: double
-		lineageTag: d4cbb2d2-f047-4113-9ea2-9638b9fbd2f2
+		lineageTag: 7eb8619e-06bc-4786-98ec-f1f61f729d5b
 		sourceLineageTag: typical_price
 		summarizeBy: sum
 		sourceColumn: typical_price

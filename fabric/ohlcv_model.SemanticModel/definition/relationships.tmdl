@@ -1,0 +1,10 @@
+relationship f6a291d9-9349-3c35-9a7f-df8c5a440053
+	crossFilteringBehavior: bothDirections
+	fromColumn: ohlcv_1m_features.base_asset
+	toColumn: dim_asset.base_asset
+
+relationship 1b702b8e-77a2-8132-47c0-4d1c32cfa518
+	crossFilteringBehavior: bothDirections
+	fromColumn: dim_asset.base_asset
+	toColumn: ohlcv_daily.base_asset
+

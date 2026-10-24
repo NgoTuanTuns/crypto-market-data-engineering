@@ -1,0 +1,47 @@
+table dim_asset
+	lineageTag: 70f93547-6271-42c5-934e-2b73f96eebd9
+	sourceLineageTag: [gold].[dim_asset]
+
+	column base_asset
+		dataType: string
+		lineageTag: d254ffaf-5a26-4353-96bc-2ced109a56f9
+		sourceLineageTag: base_asset
+		summarizeBy: none
+		sourceColumn: base_asset
+
+		annotation SummarizationSetBy = Automatic
+
+	column asset_name
+		dataType: string
+		lineageTag: b9b54f58-4a3b-4f04-9ffe-0029be6ea3dc
+		sourceLineageTag: asset_name
+		summarizeBy: none
+		sourceColumn: asset_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column finnhub_symbol
+		dataType: string
+		lineageTag: 54cb4edd-cc13-45b1-9372-77ce2b017cbe
+		sourceLineageTag: finnhub_symbol
+		summarizeBy: none
+		sourceColumn: finnhub_symbol
+
+		annotation SummarizationSetBy = Automatic
+
+	column marketaux_symbol
+		dataType: string
+		lineageTag: c542ccd3-d9c4-47f2-aab3-ed046f71c5fb
+		sourceLineageTag: marketaux_symbol
+		summarizeBy: none
+		sourceColumn: marketaux_symbol
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_asset = entity
+		mode: directLake
+		source
+			entityName: dim_asset
+			schemaName: gold
+			expressionSource: 'DirectLake - crypto'
+
