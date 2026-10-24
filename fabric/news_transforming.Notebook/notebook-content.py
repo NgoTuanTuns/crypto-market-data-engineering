@@ -104,3 +104,20 @@ except Exception as e:
 # META   "language": "python",
 # META   "language_group": "synapse_pyspark"
 # META }
+
+# CELL ********************
+
+df_news = (
+    spark.read.table("silver.news")
+    .withColumn("base_asset", F.explode("matched_symbols"))
+    .withColumn("date", F.col("published_ts").cast("date"))
+    .select("id", "base_asset", "headline", "summary", "source", "url", "published_ts", "date")
+)
+df_news.write.format("delta").mode("overwrite").saveAsTable("gold.news_by_symbol")
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
