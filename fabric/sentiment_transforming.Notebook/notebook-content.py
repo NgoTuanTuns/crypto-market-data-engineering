@@ -112,3 +112,29 @@ except Exception as e:
 # META   "language": "python",
 # META   "language_group": "synapse_pyspark"
 # META }
+
+# CELL ********************
+
+df_sent = (
+    spark.read.table("silver.sentiment")
+    .withColumnRenamed("symbol", "base_asset")
+    .withColumnRenamed("published_date", "published_ts")
+    .withColumn("date", F.col("published_ts").cast("date"))
+    .select("base_asset", "title", "description", "url", "source", "published_ts", "date",
+            "entity_match_score", "entity_sentiment_score")
+)
+df_sent.write.format("delta").mode("overwrite").saveAsTable("gold.sentiment_articles")
+
+df_sent_daily = (
+    df_sent.groupBy("base_asset", "date")
+    .agg(F.avg("entity_sentiment_score").alias("avg_sentiment"),
+         F.count("*").alias("sentiment_article_count"))
+)
+df_sent_daily.write.format("delta").mode("overwrite").saveAsTable("gold.sentiment_daily")
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
