@@ -1,16 +1,16 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
-  "name": "8e89c42e164f3fc155fe",
+  "name": "e4f985fbe01d27951ecb",
   "position": {
-    "x": 1006,
+    "x": 0,
     "y": 664,
-    "z": 1003,
+    "z": 2000,
     "height": 416,
-    "width": 914,
-    "tabOrder": 1003
+    "width": 1006,
+    "tabOrder": 2000
   },
   "visual": {
-    "visualType": "lineChart",
+    "visualType": "clusteredColumnChart",
     "query": {
       "queryState": {
         "Category": {
@@ -32,9 +32,6 @@
             }
           ]
         },
-        "Series": {
-          "projections": []
-        },
         "Y": {
           "projections": [
             {
@@ -47,14 +44,14 @@
                           "Entity": "ohlcv_1m_features"
                         }
                       },
-                      "Property": "close"
+                      "Property": "volume"
                     }
                   },
                   "Function": 0
                 }
               },
-              "queryRef": "Sum(ohlcv_1m_features.close)",
-              "nativeQueryRef": "Sum of close"
+              "queryRef": "Sum(ohlcv_1m_features.volume)",
+              "nativeQueryRef": "Sum of volume"
             }
           ]
         }
@@ -78,43 +75,21 @@
         "isDefaultSort": true
       }
     },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Khối lượng theo phút'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "42ba39d84e72e9067c17",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "ohlcv_1m_features"
-              }
-            },
-            "Property": "minute_ts"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "8646fc555e1379bcb171",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "ohlcv_1m_features"
-                  }
-                },
-                "Property": "close"
-              }
-            },
-            "Function": 0
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

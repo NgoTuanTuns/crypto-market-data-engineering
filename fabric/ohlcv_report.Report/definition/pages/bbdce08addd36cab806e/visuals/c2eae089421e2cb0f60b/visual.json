@@ -28,7 +28,8 @@
               },
               "queryRef": "ohlcv_1m_features.minute_ts",
               "nativeQueryRef": "minute_ts",
-              "active": true
+              "active": true,
+              "format": "HH:mm"
             }
           ]
         },
@@ -144,6 +145,69 @@
         "isDefaultSort": true
       }
     },
+    "objects": {
+      "xAxis": [
+        {
+          "properties": {
+            "type": {
+              "expr": {
+                "Literal": {
+                  "Value": "'categorical'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "trendLines": [
+        {
+          "properties": {
+            "weight": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dataPoint": [
+        {
+          "properties": {
+            "highLowCaps": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Nến 1 phút'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
     "drillFilterOtherVisuals": true
   },
   "filterConfig": {
@@ -178,96 +242,6 @@
             }
           ]
         }
-      },
-      {
-        "name": "b960c2d0fb6b34e5ef9f",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "ohlcv_1m_features"
-              }
-            },
-            "Property": "minute_ts"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "9450331cb187e571f23b",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "ohlcv_1m_features"
-                  }
-                },
-                "Property": "open"
-              }
-            },
-            "Function": 0
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "480411eac346471adc07",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "ohlcv_1m_features"
-                  }
-                },
-                "Property": "close"
-              }
-            },
-            "Function": 0
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "df50c92f2eea18bd200f",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "ohlcv_1m_features"
-                  }
-                },
-                "Property": "high"
-              }
-            },
-            "Function": 0
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "0e511cfc2c43eadfb8c1",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "ohlcv_1m_features"
-                  }
-                },
-                "Property": "low"
-              }
-            },
-            "Function": 0
-          }
-        },
-        "type": "Advanced"
       }
     ]
   }

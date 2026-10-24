@@ -1,0 +1,194 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "4579430748b63b64e3b0",
+  "position": {
+    "x": 1005.6720554272518,
+    "y": 234.88485648300892,
+    "z": 3000,
+    "height": 419.600131969647,
+    "width": 914.45463543385029,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "ohlcv_1m_features"
+                    }
+                  },
+                  "Property": "minute_ts"
+                }
+              },
+              "queryRef": "ohlcv_1m_features.minute_ts",
+              "nativeQueryRef": "minute_ts",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "ohlcv_1m_features"
+                        }
+                      },
+                      "Property": "close"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(ohlcv_1m_features.close)",
+              "nativeQueryRef": "Sum of close"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "ohlcv_1m_features"
+                        }
+                      },
+                      "Property": "ma5"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(ohlcv_1m_features.ma5)",
+              "nativeQueryRef": "Sum of ma5"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "ohlcv_1m_features"
+                        }
+                      },
+                      "Property": "ma15"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(ohlcv_1m_features.ma15)",
+              "nativeQueryRef": "Sum of ma15"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "ohlcv_1m_features"
+                  }
+                },
+                "Property": "minute_ts"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "seriesLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "lineStyles": [
+        {
+          "properties": {
+            "lineChartType": {
+              "expr": {
+                "Literal": {
+                  "Value": "'linear'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "categoryAxis": [
+        {
+          "properties": {
+            "showAxisTitle": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "titleText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'times (UTC)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Giá và đường trung bình (MA5, MA15)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}
