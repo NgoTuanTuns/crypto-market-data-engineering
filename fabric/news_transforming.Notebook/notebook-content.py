@@ -42,7 +42,7 @@ df_critical_null = df.withColumn(
 )
 
 df_matched_symbol_null_handling = df_critical_null.withColumn('matched_symbols',
-    F.when(F.size(F.col('matched_symbols')) == 0, F.lit(['MARKET'])).otherwise(F.col('matched_symbols'))
+    F.when(F.col('matched_symbols').isNull() | F.size(F.col('matched_symbols')) == 0, F.lit(['MARKET'])).otherwise(F.col('matched_symbols'))
 )
 
 df_summary_null_handling = df_matched_symbol_null_handling.withColumn('summary', 
