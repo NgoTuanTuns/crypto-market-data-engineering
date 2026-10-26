@@ -1,0 +1,139 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "0558d9a07a800a729f02",
+  "position": {
+    "x": 909.89376443418018,
+    "y": 0,
+    "z": 6000,
+    "height": 556.42626195974924,
+    "width": 1010.2329264269218,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "news_by_symbol"
+                    }
+                  },
+                  "Property": "published_ts"
+                }
+              },
+              "queryRef": "news_by_symbol.published_ts",
+              "nativeQueryRef": "published_ts"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "news_by_symbol"
+                    }
+                  },
+                  "Property": "base_asset"
+                }
+              },
+              "queryRef": "news_by_symbol.base_asset",
+              "nativeQueryRef": "base_asset"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "news_by_symbol"
+                    }
+                  },
+                  "Property": "headline"
+                }
+              },
+              "queryRef": "news_by_symbol.headline",
+              "nativeQueryRef": "headline"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "news_by_symbol"
+                    }
+                  },
+                  "Property": "source"
+                }
+              },
+              "queryRef": "news_by_symbol.source",
+              "nativeQueryRef": "source"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "news_by_symbol"
+                    }
+                  },
+                  "Property": "url"
+                }
+              },
+              "queryRef": "news_by_symbol.url",
+              "nativeQueryRef": "url"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "news_by_symbol"
+                  }
+                },
+                "Property": "published_ts"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "objects": {
+      "values": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "15D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "columnHeaders": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "15D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

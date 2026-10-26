@@ -4,10 +4,10 @@
   "position": {
     "x": 1251.9590894094358,
     "y": 0,
-    "z": 4001,
+    "z": 5000,
     "height": 235,
     "width": 667,
-    "tabOrder": 4001
+    "tabOrder": 5000
   },
   "visual": {
     "visualType": "slicer",
@@ -145,26 +145,34 @@
             }
           }
         }
+      ],
+      "date": [
+        {
+          "properties": {
+            "textSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "20D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "header": [
+        {
+          "properties": {
+            "textSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "20D"
+                }
+              }
+            }
+          }
+        }
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "2ccbfa25d45bac13bb63",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "ohlcv_1m_features"
-              }
-            },
-            "Property": "minute_ts"
-          }
-        },
-        "type": "Categorical"
-      }
-    ]
   }
 }

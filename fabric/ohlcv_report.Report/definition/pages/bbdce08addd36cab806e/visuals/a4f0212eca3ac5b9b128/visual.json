@@ -5,8 +5,8 @@
     "x": 1005.6720554272518,
     "y": 0,
     "z": 1000,
-    "height": 234.66666666666666,
-    "width": 247.46666666666667,
+    "height": 234.88485648300892,
+    "width": 248.56746948201916,
     "tabOrder": 1000
   },
   "visual": {
@@ -50,46 +50,30 @@
       ],
       "general": [
         {
+          "properties": {}
+        }
+      ],
+      "header": [
+        {
           "properties": {
-            "filter": {
-              "filter": {
-                "Version": 2,
-                "From": [
-                  {
-                    "Name": "o",
-                    "Entity": "ohlcv_1m_features",
-                    "Type": 0
-                  }
-                ],
-                "Where": [
-                  {
-                    "Condition": {
-                      "In": {
-                        "Expressions": [
-                          {
-                            "Column": {
-                              "Expression": {
-                                "SourceRef": {
-                                  "Source": "o"
-                                }
-                              },
-                              "Property": "symbol"
-                            }
-                          }
-                        ],
-                        "Values": [
-                          [
-                            {
-                              "Literal": {
-                                "Value": "'BINANCE:LTCUSDT'"
-                              }
-                            }
-                          ]
-                        ]
-                      }
-                    }
-                  }
-                ]
+            "textSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "20D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "items": [
+        {
+          "properties": {
+            "textSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "15D"
+                }
               }
             }
           }

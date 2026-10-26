@@ -99,6 +99,82 @@
         "isDefaultSort": true
       }
     },
+    "objects": {
+      "value": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "30D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "default"
+          }
+        }
+      ],
+      "label": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "20D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "default"
+          }
+        },
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Cao nhất'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Sum(ohlcv_1m_features.high)"
+          }
+        },
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Thấp nhất'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Sum(ohlcv_1m_features.low)"
+          }
+        },
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Tổng giao dịch'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Sum(ohlcv_1m_features.trades)"
+          }
+        }
+      ]
+    },
     "visualContainerObjects": {
       "visualTooltip": [
         {
