@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "sentiment_transforming"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "fae6de0e-654c-9d90-443f-351b42a710ea"
+  }
+}

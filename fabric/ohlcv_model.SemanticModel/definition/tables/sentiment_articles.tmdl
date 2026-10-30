@@ -1,0 +1,98 @@
+table sentiment_articles
+	lineageTag: a066a167-8f38-40bb-b7c0-e1da7aa7f648
+	sourceLineageTag: [gold].[sentiment_articles]
+
+	column base_asset
+		dataType: string
+		lineageTag: 028665a3-ebcd-455a-9c7f-29be95c2a77a
+		sourceLineageTag: base_asset
+		summarizeBy: none
+		sourceColumn: base_asset
+
+		annotation SummarizationSetBy = Automatic
+
+	column title
+		dataType: string
+		lineageTag: 15848bdb-6ee3-48f7-92af-3cdbd7b2c98a
+		sourceLineageTag: title
+		summarizeBy: none
+		sourceColumn: title
+
+		annotation SummarizationSetBy = Automatic
+
+	column description
+		dataType: string
+		lineageTag: 6290f6c9-a887-4a14-97b3-1d70803f3be7
+		sourceLineageTag: description
+		summarizeBy: none
+		sourceColumn: description
+
+		annotation SummarizationSetBy = Automatic
+
+	column url
+		dataType: string
+		lineageTag: 2da143b1-ae38-41ce-b4a2-87b810188249
+		sourceLineageTag: url
+		summarizeBy: none
+		sourceColumn: url
+
+		annotation SummarizationSetBy = Automatic
+
+	column source
+		dataType: string
+		lineageTag: b4b90dd8-fcc4-4eb7-8257-8acdb13babbc
+		sourceLineageTag: source
+		summarizeBy: none
+		sourceColumn: source
+
+		annotation SummarizationSetBy = Automatic
+
+	column published_ts
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 4fe48a40-c235-4a06-83ab-1adbfcdaf985
+		sourceLineageTag: published_ts
+		summarizeBy: none
+		sourceColumn: published_ts
+
+		annotation SummarizationSetBy = Automatic
+
+	column date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 74f82111-dc3b-46b6-bc53-70331c47208a
+		sourceLineageTag: date
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation SummarizationSetBy = Automatic
+
+	column entity_match_score
+		dataType: double
+		lineageTag: 42be7911-95c1-4dc4-9021-2b0811e285cf
+		sourceLineageTag: entity_match_score
+		summarizeBy: sum
+		sourceColumn: entity_match_score
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column entity_sentiment_score
+		dataType: double
+		lineageTag: e675f3ad-f759-4e3b-8310-ca136feedf66
+		sourceLineageTag: entity_sentiment_score
+		summarizeBy: sum
+		sourceColumn: entity_sentiment_score
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition sentiment_articles = entity
+		mode: directLake
+		source
+			entityName: sentiment_articles
+			schemaName: gold
+			expressionSource: 'DirectLake - crypto'
+

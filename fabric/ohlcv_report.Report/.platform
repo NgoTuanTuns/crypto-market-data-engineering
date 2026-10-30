@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "ohlcv_report"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "00c938bf-e2df-87b1-482e-e051d3719f6d"
+  }
+}

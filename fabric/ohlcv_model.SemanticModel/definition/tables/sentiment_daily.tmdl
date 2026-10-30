@@ -1,0 +1,51 @@
+table sentiment_daily
+	lineageTag: daeeb874-7f19-4e21-abc2-0ac0334d9dbb
+	sourceLineageTag: [gold].[sentiment_daily]
+
+	column base_asset
+		dataType: string
+		lineageTag: e68005df-4cc7-464c-8b99-a671b25477a1
+		sourceLineageTag: base_asset
+		summarizeBy: none
+		sourceColumn: base_asset
+
+		annotation SummarizationSetBy = Automatic
+
+	column date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 43cbcb55-d32e-4085-a153-b4236423af65
+		sourceLineageTag: date
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation SummarizationSetBy = Automatic
+
+	column avg_sentiment
+		dataType: double
+		lineageTag: 8a839ee7-594f-4d2f-bf22-3f8ef369f697
+		sourceLineageTag: avg_sentiment
+		summarizeBy: sum
+		sourceColumn: avg_sentiment
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column sentiment_article_count
+		dataType: int64
+		formatString: 0
+		lineageTag: 0920affc-9805-4fb7-9ce0-edc401fee8f8
+		sourceLineageTag: sentiment_article_count
+		summarizeBy: sum
+		sourceColumn: sentiment_article_count
+
+		annotation SummarizationSetBy = Automatic
+
+	partition sentiment_daily = entity
+		mode: directLake
+		source
+			entityName: sentiment_daily
+			schemaName: gold
+			expressionSource: 'DirectLake - crypto'
+

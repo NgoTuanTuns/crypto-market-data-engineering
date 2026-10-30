@@ -1,0 +1,32 @@
+relationship 28b5c10c-5ec8-0138-5d72-89323694f9f8
+	fromColumn: ohlcv_daily.base_asset
+	toColumn: dim_asset.base_asset
+
+relationship 4a736f73-97c6-009b-37fc-4f512fb2304d
+	fromColumn: ohlcv_1m_features.base_asset
+	toColumn: dim_asset.base_asset
+
+relationship f78252c4-a2c5-37ca-ced4-26eecb177b51
+	fromColumn: sentiment_daily.base_asset
+	toColumn: dim_asset.base_asset
+
+relationship bfd5b26e-9ab8-2f88-3658-bf62f252dff9
+	fromColumn: news_by_symbol.base_asset
+	toColumn: dim_asset.base_asset
+
+relationship 5f5d3b90-880e-4c37-94dc-def60d99cff8
+	fromColumn: sentiment_articles.base_asset
+	toColumn: dim_asset.base_asset
+
+relationship d76156ec-dad9-bf51-8cef-50cbc04d3793
+	fromColumn: sentiment_daily.date
+	toColumn: dim_date.date
+
+relationship 3e83f33a-8556-174c-75fc-5386bd80596b
+	fromColumn: news_by_symbol.date
+	toColumn: dim_date.date
+
+relationship cccd0819-a2c4-b090-b2cb-e1b20d4ef3bf
+	fromColumn: sentiment_articles.date
+	toColumn: dim_date.date
+

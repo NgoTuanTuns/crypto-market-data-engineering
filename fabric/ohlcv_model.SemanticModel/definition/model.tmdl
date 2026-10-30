@@ -1,0 +1,22 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["DirectLake - crypto"]
+
+annotation PBI_ProTooling = ["DirectLakeOnOneLakeInWeb","WebModelingEdit"]
+
+ref table ohlcv_1m_features
+ref table ohlcv_daily
+ref table dim_asset
+ref table dim_date
+ref table news_by_symbol
+ref table sentiment_articles
+ref table sentiment_daily
+

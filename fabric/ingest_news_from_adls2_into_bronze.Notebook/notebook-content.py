@@ -49,22 +49,22 @@ CHECKPOINT_PATH = 'Files/checkpoint/news/source_to_bronze'
 # CELL ********************
 
 df = (
-        spark.readStream
-            .schema(schema)
-            .option("maxFilesPerTrigger", 1)
-            .json(SOURCE_PATH)
+    spark.readStream
+        .schema(schema)
+        .option("maxFilesPerTrigger", 1)
+        .json(SOURCE_PATH)
 )
 
 df = df.withColumn('_ingestion_at', current_timestamp())\
         .withColumn('_from_source', regexp_extract(input_file_name(), r"(Files/.*)", 1))
 
 query = (
-        df.writeStream
-            .format('delta')
-            .outputMode('append')
-            .option('checkpointLocation', CHECKPOINT_PATH)
-            .trigger(availableNow=True)
-            .start('Tables/bronze/news')
+    df.writeStream
+        .format('delta')
+        .outputMode('append')
+        .option('checkpointLocation', CHECKPOINT_PATH)
+        .trigger(availableNow=True)
+        .start('Tables/bronze/news')
 )
 
 query.awaitTermination()

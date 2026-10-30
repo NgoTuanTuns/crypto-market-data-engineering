@@ -1,0 +1,139 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "5d2251ee351bf7bcb468",
+  "position": {
+    "x": 960.06334543055107,
+    "y": 0,
+    "z": 5000,
+    "height": 462.92840646651274,
+    "width": 960.06334543055107,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "sentiment_articles"
+                    }
+                  },
+                  "Property": "published_ts"
+                }
+              },
+              "queryRef": "sentiment_articles.published_ts",
+              "nativeQueryRef": "published_ts"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "sentiment_articles"
+                    }
+                  },
+                  "Property": "base_asset"
+                }
+              },
+              "queryRef": "sentiment_articles.base_asset",
+              "nativeQueryRef": "base_asset"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "sentiment_articles"
+                    }
+                  },
+                  "Property": "title"
+                }
+              },
+              "queryRef": "sentiment_articles.title",
+              "nativeQueryRef": "title"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "sentiment_articles"
+                    }
+                  },
+                  "Property": "entity_sentiment_score"
+                }
+              },
+              "queryRef": "Sum(sentiment_articles.entity_sentiment_score)",
+              "nativeQueryRef": "entity_sentiment_score"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "sentiment_articles"
+                    }
+                  },
+                  "Property": "url"
+                }
+              },
+              "queryRef": "sentiment_articles.url",
+              "nativeQueryRef": "url"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "sentiment_articles"
+                  }
+                },
+                "Property": "title"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "objects": {
+      "values": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "15D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "columnHeaders": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "15D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

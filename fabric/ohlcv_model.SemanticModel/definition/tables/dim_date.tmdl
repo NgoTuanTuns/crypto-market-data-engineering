@@ -1,0 +1,70 @@
+table dim_date
+	lineageTag: 1aa553c0-2285-4837-a91b-a02d7e8f1cb6
+	sourceLineageTag: [gold].[dim_date]
+
+	column date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 80777b36-877d-4ccd-a102-a040b3ee0755
+		sourceLineageTag: date
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation SummarizationSetBy = Automatic
+
+	column year
+		dataType: int64
+		formatString: 0
+		lineageTag: 658b8422-053b-4a63-a08c-ccc963362b4f
+		sourceLineageTag: year
+		summarizeBy: sum
+		sourceColumn: year
+
+		annotation SummarizationSetBy = Automatic
+
+	column month
+		dataType: int64
+		formatString: 0
+		lineageTag: 2876f2aa-7df8-4427-b343-89df11cfad3f
+		sourceLineageTag: month
+		summarizeBy: sum
+		sourceColumn: month
+
+		annotation SummarizationSetBy = Automatic
+
+	column day
+		dataType: int64
+		formatString: 0
+		lineageTag: 617436c0-fbf8-4ae2-97d3-518a0e98dfc2
+		sourceLineageTag: day
+		summarizeBy: sum
+		sourceColumn: day
+
+		annotation SummarizationSetBy = Automatic
+
+	column day_of_week
+		dataType: string
+		lineageTag: a2649858-5901-42a3-aef1-6adf75536868
+		sourceLineageTag: day_of_week
+		summarizeBy: none
+		sourceColumn: day_of_week
+
+		annotation SummarizationSetBy = Automatic
+
+	column week_of_year
+		dataType: int64
+		formatString: 0
+		lineageTag: d89d0a31-05fb-424e-bc49-bbd0628c43e5
+		sourceLineageTag: week_of_year
+		summarizeBy: sum
+		sourceColumn: week_of_year
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_date = entity
+		mode: directLake
+		source
+			entityName: dim_date
+			schemaName: gold
+			expressionSource: 'DirectLake - crypto'
+

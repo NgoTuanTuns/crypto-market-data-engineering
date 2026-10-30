@@ -1,0 +1,288 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "c2eae089421e2cb0f60b",
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0,
+    "height": 654.4849884526559,
+    "width": 1005.6720554272518,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "PBI_CV_886A053E_9DFD_4EA0_A47D_CCAEB89AF969",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "ohlcv_1m_features"
+                    }
+                  },
+                  "Property": "minute_ts"
+                }
+              },
+              "queryRef": "ohlcv_1m_features.minute_ts",
+              "nativeQueryRef": "minute_ts",
+              "active": true,
+              "format": "HH:mm"
+            }
+          ]
+        },
+        "open": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "ohlcv_1m_features"
+                        }
+                      },
+                      "Property": "open"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(ohlcv_1m_features.open)",
+              "nativeQueryRef": "Sum of open"
+            }
+          ]
+        },
+        "close": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "ohlcv_1m_features"
+                        }
+                      },
+                      "Property": "close"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(ohlcv_1m_features.close)",
+              "nativeQueryRef": "Sum of close"
+            }
+          ]
+        },
+        "high": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "ohlcv_1m_features"
+                        }
+                      },
+                      "Property": "high"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(ohlcv_1m_features.high)",
+              "nativeQueryRef": "Sum of high"
+            }
+          ]
+        },
+        "low": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "ohlcv_1m_features"
+                        }
+                      },
+                      "Property": "low"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(ohlcv_1m_features.low)",
+              "nativeQueryRef": "Sum of low"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "ohlcv_1m_features"
+                  }
+                },
+                "Property": "minute_ts"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "objects": {
+      "xAxis": [
+        {
+          "properties": {
+            "type": {
+              "expr": {
+                "Literal": {
+                  "Value": "'categorical'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "trendLines": [
+        {
+          "properties": {
+            "weight": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dataPoint": [
+        {
+          "properties": {
+            "highLowCaps": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "yAxis": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "13D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Nến 1 phút'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "20D"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Calibri'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "15D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "523dea186f457ae7f96e",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "ohlcv_1m_features"
+              }
+            },
+            "Property": "symbol"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "User",
+        "isLockedInViewMode": true,
+        "objects": {
+          "general": [
+            {
+              "properties": {
+                "requireSingleSelect": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "true"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

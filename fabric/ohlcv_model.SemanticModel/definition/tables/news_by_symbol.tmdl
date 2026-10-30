@@ -1,0 +1,86 @@
+table news_by_symbol
+	lineageTag: 2a80b4ac-28dc-4071-9545-1cfc10851204
+	sourceLineageTag: [gold].[news_by_symbol]
+
+	column id
+		dataType: int64
+		formatString: 0
+		lineageTag: e779f9be-835f-4ca3-a809-99a761934f2a
+		sourceLineageTag: id
+		summarizeBy: sum
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column base_asset
+		dataType: string
+		lineageTag: 212df0aa-b4c3-4ae3-acd4-a67a4d955454
+		sourceLineageTag: base_asset
+		summarizeBy: none
+		sourceColumn: base_asset
+
+		annotation SummarizationSetBy = Automatic
+
+	column headline
+		dataType: string
+		lineageTag: 65ca75f5-e9fb-4248-b9c2-48d4a27976d0
+		sourceLineageTag: headline
+		summarizeBy: none
+		sourceColumn: headline
+
+		annotation SummarizationSetBy = Automatic
+
+	column summary
+		dataType: string
+		lineageTag: 4b7a13ca-8002-450d-bcc0-01958b7a0302
+		sourceLineageTag: summary
+		summarizeBy: none
+		sourceColumn: summary
+
+		annotation SummarizationSetBy = Automatic
+
+	column source
+		dataType: string
+		lineageTag: 9e108e34-62a6-4caa-ad06-092969dc2fcc
+		sourceLineageTag: source
+		summarizeBy: none
+		sourceColumn: source
+
+		annotation SummarizationSetBy = Automatic
+
+	column url
+		dataType: string
+		lineageTag: c15be4ef-763c-41cd-bb61-05056db9e368
+		sourceLineageTag: url
+		summarizeBy: none
+		sourceColumn: url
+
+		annotation SummarizationSetBy = Automatic
+
+	column published_ts
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: b6ba7d4a-9e6e-4a6a-a870-098e69eb73f2
+		sourceLineageTag: published_ts
+		summarizeBy: none
+		sourceColumn: published_ts
+
+		annotation SummarizationSetBy = Automatic
+
+	column date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 7338551c-7c68-4cd5-be9a-5be55ffa270e
+		sourceLineageTag: date
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation SummarizationSetBy = Automatic
+
+	partition news_by_symbol = entity
+		mode: directLake
+		source
+			entityName: news_by_symbol
+			schemaName: gold
+			expressionSource: 'DirectLake - crypto'
+

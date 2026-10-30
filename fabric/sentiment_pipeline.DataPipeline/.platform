@@ -1,11 +1,11 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
   "metadata": {
-    "type": "Notebook",
-    "displayName": "ingest_candles_from_adls2_into_bronze"
+    "type": "DataPipeline",
+    "displayName": "sentiment_pipeline"
   },
   "config": {
     "version": "2.0",
-    "logicalId": "94be2a98-57f7-bbb9-4c44-b1f892d20766"
+    "logicalId": "e74f40f3-393b-b7d3-4e22-ab68d349deeb"
   }
 }

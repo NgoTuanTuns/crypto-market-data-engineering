@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "ohlcv_model"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "a1f65dcd-2719-906d-4cea-464a44e41661"
+  }
+}
