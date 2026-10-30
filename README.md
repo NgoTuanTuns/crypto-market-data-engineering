@@ -171,4 +171,4 @@ Then create the `adls2_connection` connection and enable the news and sentiment 
 
 ## Author
 
-### Ngô Tuấn Tú, [LinkedIn](linkedin.com/in/ngo-tuan-tu)
+### Ngô Tuấn Tú, [LinkedIn](www.linkedin.com/in/ngo-tuan-tu)
