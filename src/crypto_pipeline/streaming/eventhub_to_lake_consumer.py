@@ -27,23 +27,40 @@ LOCAL_TMP_DIR = Path("/tmp/candles")
 
 buffer: list[dict] = []
 buf_lock = asyncio.Lock()
+pending = {}   # partition_id -> (partition_context, event cuối của partition đó)
 
 async def on_event(partition_context, event):
-    if event is None: 
+    if event is None:
         return
     try:
         candle = json.loads(event.body_as_str(encoding="UTF-8"))
     except (ValueError, UnicodeDecodeError) as e:
         print(f"[PARSE ERROR] partition={partition_context.partition_id} {e}", flush=True)
         return
-
     print(f"[RECEIVED] partition={partition_context.partition_id} symbol={candle.get('symbol')}", flush=True)
-
     async with buf_lock:
         buffer.append(candle)
+        pending[partition_context.partition_id] = (partition_context, event)
 
-    await partition_context.update_checkpoint(event)
-
+async def flush_once():
+    async with buf_lock:
+        if not buffer:
+            return
+        rows = buffer.copy()
+        to_commit = dict(pending)
+        buffer.clear()
+        pending.clear()
+    try:
+        await upload_rows_to_adls(rows)
+    except Exception as e:
+        async with buf_lock:                      # trả nến lại buffer, không checkpoint
+            buffer[:0] = rows
+            for pid, v in to_commit.items():
+                pending.setdefault(pid, v)
+        print(f"[UPLOAD ERROR] {e}", flush=True)
+        return
+    for ctx, ev in to_commit.values():            # đã ghi xong mới ghi nhớ vị trí đọc
+        await ctx.update_checkpoint(ev)
 
 async def on_partition_init(partition_context):
     print(f"[EH] Starting to read a partition {partition_context.partition_id}....", flush=True)
@@ -86,15 +103,7 @@ async def upload_rows_to_adls(rows: list[dict]):
 async def flusher():
     while True:
         await asyncio.sleep(FLUSH_INTERVAL_SEC)
-        async with buf_lock:
-            if not buffer:
-                continue
-            rows = buffer.copy()
-            buffer.clear()
-        try:
-            await upload_rows_to_adls(rows)
-        except Exception as e:
-            print(f"[UPLOAD ERROR] {e} — {len(rows)} lost", flush=True)
+        await flush_once()
 
 
 async def main():
