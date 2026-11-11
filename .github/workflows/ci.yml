@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install dependencies
+        run: uv sync --locked --group dev
+
+      - name: Run Ruff linter
+        run: uv run ruff check .
+
+      - name: Run pytest unit tests
+        run: uv run pytest -v
+
+  validate-fabric:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: ".python-version"
+
+      - name: Validate Fabric notebook Python AST and JSON configs
+        run: |
+          python - <<'EOF'
+          import ast
+          import json
+          import pathlib
+
+          py_files = sorted(pathlib.Path("fabric").rglob("*.py"))
+          for path in py_files:
+              ast.parse(path.read_text(encoding="utf-8-sig"), filename=str(path))
+          print(f"Validated {len(py_files)} Fabric Python files")
+
+          json_suffixes = {".json", ".pbir", ".pbism", ".platform", ".schedules"}
+          json_files = sorted(
+              p for p in pathlib.Path("fabric").rglob("*") if p.suffix in json_suffixes
+          )
+          for path in json_files:
+              json.loads(path.read_text(encoding="utf-8-sig"))
+          print(f"Validated {len(json_files)} Fabric JSON files")
+          EOF
+
+  validate-airflow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check Airflow requirements encoding
+        run: |
+          python3 - <<'EOF'
+          from pathlib import Path
+
+          raw = Path("airflow/requirements.txt").read_bytes()
+          assert b"\x00" not in raw, "airflow/requirements.txt contains NUL bytes"
+          raw.decode("utf-8")
+          print(f"airflow/requirements.txt is valid UTF-8 ({len(raw)} bytes)")
+          EOF
+
+      - name: Validate Airflow DAG syntax
+        run: python3 -m py_compile airflow/dags/*.py
+
+      - name: Validate Docker Compose config
+        env:
+          ENV_FILE_PATH: ../.env.example
+        run: docker compose -f airflow/docker-compose.yaml config -q
