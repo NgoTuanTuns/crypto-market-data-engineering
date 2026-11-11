@@ -1,15 +1,17 @@
-import requests
-import os
-from dotenv import load_dotenv
 import json
-from airflow import DAG
+import os
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
+
+import requests
 from airflow.operators.python import PythonOperator
-from datetime import datetime, timedelta
 from airflow.providers.microsoft.azure.hooks.data_lake import AzureDataLakeStorageV2Hook
+from dotenv import load_dotenv
+
+from airflow import DAG
 
 load_dotenv()
-LOCAL_TMP_DIR = LOCAL_TMP_DIR = Path("/tmp/news")
+LOCAL_TMP_DIR = Path("/tmp/news")
 ADLS_PATH_TEMPLATE = "news/{ds}.jsonl"
 ADLS_FILESYSTEM = 'source'
 FINNHUB_API_KEY = (os.getenv('FINNHUB_API_KEY') or "").strip()
@@ -23,7 +25,7 @@ CRYPTO_KEYWORDS = {
 default_args = {
     'owner':'tuns',
     'retries':5,
-    'retry_delays': timedelta(minutes=2)
+    'retry_delay': timedelta(minutes=2)
 }
 
 def news_ingestion(ds, logical_date, **context):
@@ -78,7 +80,7 @@ def upload_to_adls(ds, logical_date, **context):
 with DAG (
     dag_id = 'News_ingestion',
     default_args = default_args,
-    start_date = datetime(2026, 9, 1),
+    start_date = datetime(2026, 9, 1, tzinfo=UTC),
     schedule = '@hourly'
 ) as dag:
     task1 = PythonOperator(task_id = 'news_ingestion', python_callable = news_ingestion)

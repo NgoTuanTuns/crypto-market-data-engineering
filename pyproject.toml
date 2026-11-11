@@ -22,3 +22,16 @@ rag = []
 dashboard = ["streamlit"]
 airflow = ["requests", "python-dotenv"]
 dev = ["pytest", "ruff"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+exclude = ["fabric"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "DTZ", "PLW", "ASYNC"]
+ignore = ["E501"]

@@ -1,14 +1,15 @@
 import json
 import os
 import time
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import requests
-from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.providers.microsoft.azure.hooks.data_lake import AzureDataLakeStorageV2Hook
 from dotenv import load_dotenv
+
+from airflow import DAG
 
 load_dotenv()
 
@@ -55,7 +56,7 @@ def fetch_sentiment_for(symbol: str, marketaux_symbol: str) -> list[dict]:
             if entity.get("symbol") != marketaux_symbol:
                 continue
             rows.append({
-                "symbol": symbol,                      
+                "symbol": symbol,
                 "marketaux_symbol": marketaux_symbol,
                 "title": article.get("title"),
                 "description": article.get("description"),
@@ -113,7 +114,7 @@ def upload_to_adls(ds, **context):
 with DAG(
     dag_id="sentiment_ingestion_marketaux",
     default_args=default_args,
-    start_date=datetime(2026, 9, 1),
+    start_date=datetime(2026, 9, 1, tzinfo=UTC),
     schedule="@daily",
     catchup=False,
     tags=["crypto", "sentiment", "bronze"],

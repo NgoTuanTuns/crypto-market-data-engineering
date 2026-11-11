@@ -1,7 +1,9 @@
 import asyncio
 import json
 import os
-from datetime import datetime, timezone
+import sys
+from collections.abc import Awaitable, Callable
+from datetime import UTC, datetime
 from pathlib import Path
 
 from azure.eventhub.aio import EventHubConsumerClient
@@ -9,58 +11,103 @@ from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 from azure.storage.filedatalake.aio import DataLakeServiceClient
 from dotenv import load_dotenv
 
-load_dotenv()
-
-EVENT_HUB_CONNECTION_STR = (os.getenv("EVENT_HUB_CONNECTION_STR_CONSUMER") or "").strip()
-EVENT_HUB_NAME = os.getenv("EVENT_HUB_NAME")
 CONSUMER_GROUP = "$Default"
-
-BLOB_STORAGE_CONNECTION_STRING = (os.getenv("BLOB_STORAGE_CONNECTION_STRING") or "").strip()
-CHECKPOINT_CONTAINER = os.getenv("CHECKPOINT_CONTAINER", "eventhub-checkpoints")
-
-ADLS_ACCOUNT_NAME = os.getenv("ADLS_ACCOUNT_NAME")
-ADLS_ACCOUNT_KEY = (os.getenv("ADLS_ACCOUNT_KEY") or "").strip()
 ADLS_FILESYSTEM = "source"
-
-FLUSH_INTERVAL_SEC = 300 
+FLUSH_INTERVAL_SEC = 300
 LOCAL_TMP_DIR = Path("/tmp/candles")
 
-buffer: list[dict] = []
-buf_lock = asyncio.Lock()
-pending = {}
 
-async def on_event(partition_context, event):
-    if event is None:
-        return
-    try:
-        candle = json.loads(event.body_as_str(encoding="UTF-8"))
-    except (ValueError, UnicodeDecodeError) as e:
-        print(f"[PARSE ERROR] partition={partition_context.partition_id} {e}", flush=True)
-        return
-    print(f"[RECEIVED] partition={partition_context.partition_id} symbol={candle.get('symbol')}", flush=True)
-    async with buf_lock:
-        buffer.append(candle)
-        pending[partition_context.partition_id] = (partition_context, event)
+class CandleBatchBuffer:
+    """Async batch buffer ensuring Event Hub checkpoints advance only after upload succeeds."""
 
-async def flush_once():
-    async with buf_lock:
-        if not buffer:
-            return
-        rows = buffer.copy()
-        to_commit = dict(pending)
-        buffer.clear()
-        pending.clear()
+    def __init__(self, upload_fn: Callable[[list[dict]], Awaitable[None]]):
+        self.upload_fn = upload_fn
+        self.buffer: list[dict] = []
+        self.pending: dict[str, tuple] = {}
+        self.lock = asyncio.Lock()
+
+    async def add_event(self, partition_context, event) -> bool:
+        """Parse an incoming Event Hub candle event and stage it for the next flush."""
+        if event is None:
+            return False
+        try:
+            candle = json.loads(event.body_as_str(encoding="UTF-8"))
+        except (ValueError, UnicodeDecodeError) as e:
+            print(f"[PARSE ERROR] partition={partition_context.partition_id} {e}", flush=True)
+            return False
+
+        print(
+            f"[RECEIVED] partition={partition_context.partition_id} symbol={candle.get('symbol')}",
+            flush=True,
+        )
+        async with self.lock:
+            self.buffer.append(candle)
+            self.pending[partition_context.partition_id] = (partition_context, event)
+        return True
+
+    async def flush_once(self) -> bool:
+        """Upload staged rows and checkpoint partitions only after upload completes."""
+        async with self.lock:
+            if not self.buffer:
+                return False
+            rows = self.buffer.copy()
+            to_commit = dict(self.pending)
+            self.buffer.clear()
+            self.pending.clear()
+
+        try:
+            await self.upload_fn(rows)
+        except Exception as e:
+            async with self.lock:
+                self.buffer[:0] = rows
+                for pid, ctx_ev in to_commit.items():
+                    self.pending.setdefault(pid, ctx_ev)
+            print(f"[UPLOAD ERROR] {e}", flush=True)
+            return False
+
+        for ctx, ev in to_commit.values():
+            await ctx.update_checkpoint(ev)
+        return True
+
+
+def _write_jsonl_file(local_path: Path, rows: list[dict]) -> None:
+    local_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(local_path, "w", encoding="utf-8") as f:
+        f.writelines(json.dumps(row) + "\n" for row in rows)
+    print(f"Have compressed {len(rows)} into {local_path}", flush=True)
+
+
+async def upload_rows_to_adls(
+    rows: list[dict],
+    adls_account_name: str,
+    adls_account_key: str,
+    adls_filesystem: str = ADLS_FILESYSTEM,
+    local_tmp_dir: Path = LOCAL_TMP_DIR,
+) -> None:
+    now = datetime.now(UTC)
+    local_path = local_tmp_dir / f"{now:%Y-%m-%d}" / f"{now:%H%M%S}.jsonl"
+    await asyncio.to_thread(_write_jsonl_file, local_path, rows)
+
+    service_client = DataLakeServiceClient(
+        account_url=f"https://{adls_account_name}.dfs.core.windows.net",
+        credential=adls_account_key,
+    )
     try:
-        await upload_rows_to_adls(rows)
-    except Exception as e:
-        async with buf_lock:
-            buffer[:0] = rows
-            for pid, v in to_commit.items():
-                pending.setdefault(pid, v)
-        print(f"[UPLOAD ERROR] {e}", flush=True)
-        return
-    for ctx, ev in to_commit.values():
-        await ctx.update_checkpoint(ev)
+        async with service_client:
+            fs_client = service_client.get_file_system_client(adls_filesystem)
+            try:
+                await fs_client.create_file_system()
+            except Exception as e:
+                print(f"Filesystem might have an error: {e}", flush=True)
+
+            remote_path = f"candles/{now:%Y-%m-%d}_{now:%H%M%S}.jsonl"
+            file_client = fs_client.get_file_client(remote_path)
+            data = await asyncio.to_thread(local_path.read_bytes)
+            await file_client.upload_data(data, overwrite=True)
+            print(f"Uploaded successfully to adls://{adls_filesystem}/{remote_path}", flush=True)
+    finally:
+        await asyncio.to_thread(local_path.unlink, missing_ok=True)
+
 
 async def on_partition_init(partition_context):
     print(f"[EH] Starting to read a partition {partition_context.partition_id}....", flush=True)
@@ -70,59 +117,41 @@ async def on_error(partition_context, error):
     pid = partition_context.partition_id if partition_context else "unknown"
     print(f"[EH ERROR] partition={pid} {error}", flush=True)
 
-async def upload_rows_to_adls(rows: list[dict]):
-    now = datetime.now(timezone.utc)
-    out_dir = LOCAL_TMP_DIR / f"{now:%Y-%m-%d}"
-    out_dir.mkdir(parents=True, exist_ok=True)
-    local_path = out_dir / f"{now:%H%M%S}.jsonl"
-    with open(local_path, "w") as f:
-        for row in rows:
-            f.write(json.dumps(row) + "\n")
-    print(f"Have compressed {len(rows)} into {local_path}", flush=True)
-
-    service_client = DataLakeServiceClient(
-        account_url=f"https://{ADLS_ACCOUNT_NAME}.dfs.core.windows.net",
-        credential=ADLS_ACCOUNT_KEY,
-    )
-    async with service_client:
-        fs_client = service_client.get_file_system_client(ADLS_FILESYSTEM)
-        try:
-            await fs_client.create_file_system()
-        except Exception as e:
-            print(f"Filesystem might have an error: {e}", flush=True)
-
-        remote_path = f"candles/{now:%Y-%m-%d}_{now:%H%M%S}.jsonl"
-        file_client = fs_client.get_file_client(remote_path)
-        with open(local_path, "rb") as f:
-            data = f.read()
-        await file_client.upload_data(data, overwrite=True)
-        print(f"Uploaded successfully to adls://{ADLS_FILESYSTEM}/{remote_path}", flush=True)
-
-    local_path.unlink()
-
-async def flusher():
-    while True:
-        await asyncio.sleep(FLUSH_INTERVAL_SEC)
-        await flush_once()
-
 
 async def main():
-    checkpoint_store = BlobCheckpointStore.from_connection_string(
-        BLOB_STORAGE_CONNECTION_STRING, CHECKPOINT_CONTAINER
+    load_dotenv()
+    eh_conn = (os.getenv("EVENT_HUB_CONNECTION_STR_CONSUMER") or "").strip()
+    eh_name = os.getenv("EVENT_HUB_NAME")
+    blob_conn = (os.getenv("BLOB_STORAGE_CONNECTION_STRING") or "").strip()
+    checkpoint_container = os.getenv("CHECKPOINT_CONTAINER", "eventhub-checkpoints")
+    adls_account_name = (os.getenv("ADLS_ACCOUNT_NAME") or "").strip()
+    adls_account_key = (os.getenv("ADLS_ACCOUNT_KEY") or "").strip()
+
+    if not all([eh_conn, eh_name, blob_conn, adls_account_name, adls_account_key]):
+        sys.exit("Missing required Event Hub, Blob checkpoint, or ADLS environment variables")
+
+    batcher = CandleBatchBuffer(
+        upload_fn=lambda rows: upload_rows_to_adls(rows, adls_account_name, adls_account_key)
     )
+
+    async def flusher():
+        while True:
+            await asyncio.sleep(FLUSH_INTERVAL_SEC)
+            await batcher.flush_once()
+
+    checkpoint_store = BlobCheckpointStore.from_connection_string(blob_conn, checkpoint_container)
     client = EventHubConsumerClient.from_connection_string(
-        EVENT_HUB_CONNECTION_STR,
+        eh_conn,
         consumer_group=CONSUMER_GROUP,
-        eventhub_name=EVENT_HUB_NAME,
+        eventhub_name=eh_name,
         checkpoint_store=checkpoint_store,
     )
 
     flush_task = asyncio.create_task(flusher())
-
     async with client:
         try:
             await client.receive(
-                on_event=on_event,
+                on_event=batcher.add_event,
                 on_partition_initialize=on_partition_init,
                 on_error=on_error,
                 starting_position="-1",
