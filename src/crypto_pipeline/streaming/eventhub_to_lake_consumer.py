@@ -27,7 +27,7 @@ LOCAL_TMP_DIR = Path("/tmp/candles")
 
 buffer: list[dict] = []
 buf_lock = asyncio.Lock()
-pending = {}   # partition_id -> (partition_context, event cuối của partition đó)
+pending = {}
 
 async def on_event(partition_context, event):
     if event is None:
@@ -53,13 +53,13 @@ async def flush_once():
     try:
         await upload_rows_to_adls(rows)
     except Exception as e:
-        async with buf_lock:                      # trả nến lại buffer, không checkpoint
+        async with buf_lock:
             buffer[:0] = rows
             for pid, v in to_commit.items():
                 pending.setdefault(pid, v)
         print(f"[UPLOAD ERROR] {e}", flush=True)
         return
-    for ctx, ev in to_commit.values():            # đã ghi xong mới ghi nhớ vị trí đọc
+    for ctx, ev in to_commit.values():
         await ctx.update_checkpoint(ev)
 
 async def on_partition_init(partition_context):
