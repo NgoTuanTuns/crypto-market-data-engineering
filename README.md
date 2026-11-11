@@ -1,5 +1,11 @@
 # Crypto Market Data Engineering Pipeline
 
+[![Last Commit](https://img.shields.io/github/last-commit/NgoTuanTuns/crypto-lambda-rag-pipeline?style=flat&logo=github)](https://github.com/NgoTuanTuns/crypto-lambda-rag-pipeline/commits/main)
+[![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat&logo=python&logoColor=white)](pyproject.toml)
+[![uv](https://img.shields.io/badge/uv-managed-DE5FE9?style=flat&logo=uv&logoColor=white)](https://docs.astral.sh/uv/)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-FE5196?style=flat&logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat)](https://github.com/NgoTuanTuns/crypto-lambda-rag-pipeline/pulls)
+
 End-to-end data engineering project: real-time crypto market data from Finnhub is streamed through Azure Event Hubs into a medallion lakehouse on Microsoft Fabric. News and sentiment are ingested by Airflow, and everything is served through a Power BI (Direct Lake) dashboard.
 
 ## Highlights
