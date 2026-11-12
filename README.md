@@ -1,20 +1,22 @@
 # Crypto Market Data Engineering Pipeline
 
+[![CI](https://github.com/NgoTuanTuns/crypto-lambda-rag-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/NgoTuanTuns/crypto-lambda-rag-pipeline/actions/workflows/ci.yml)
 [![Last Commit](https://img.shields.io/github/last-commit/NgoTuanTuns/crypto-lambda-rag-pipeline?style=flat&logo=github)](https://github.com/NgoTuanTuns/crypto-lambda-rag-pipeline/commits/main)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat&logo=python&logoColor=white)](pyproject.toml)
 [![uv](https://img.shields.io/badge/uv-managed-DE5FE9?style=flat&logo=uv&logoColor=white)](https://docs.astral.sh/uv/)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-FE5196?style=flat&logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat)](https://github.com/NgoTuanTuns/crypto-lambda-rag-pipeline/pulls)
 
-End-to-end data engineering project: real-time crypto market data from Finnhub is streamed through Azure Event Hubs into a medallion lakehouse on Microsoft Fabric. News and sentiment are ingested by Airflow, and everything is served through a Power BI (Direct Lake) dashboard.
+End-to-end data engineering project: near-real-time crypto market data from Finnhub is streamed through Azure Event Hubs into a medallion lakehouse on Microsoft Fabric. News and sentiment are ingested by Airflow, and everything is served through a Power BI (Direct Lake) dashboard.
 
 ## Highlights
 
-- **Real-time ingestion:** Finnhub WebSocket trade ticks aggregated into 1-minute OHLCV candles (event time, late-tick grace period) and published to Azure Event Hubs.
-- **Streaming to lake:** an asyncio consumer buffers candles and flushes them in batches to ADLS Gen2, avoiding the small-files problem.
+- **Event-time candle ingestion:** Finnhub WebSocket trade ticks aggregated by `CandleAggregator` into 1-minute OHLCV candles (with a late-tick grace period and dropped-tick counter) and published to Azure Event Hubs.
+- **At-least-once streaming consumer:** an asyncio consumer (`CandleBatchBuffer`) batches candles and writes JSONL files to ADLS Gen2 every 5 minutes, committing Event Hubs checkpoints only after upload succeeds.
 - **Medallion lakehouse:** bronze, silver and gold Delta tables in a Fabric Lakehouse, built with Spark Structured Streaming and Delta `MERGE`.
 - **Orchestrated batch sources:** Airflow DAGs ingest crypto news (hourly) and sentiment scores (daily).
 - **Data quality:** idempotent upserts, quarantine tables for invalid rows, and validity flags on OHLC data.
+- **Testing & CI:** decoupled producer/consumer state covered by `pytest` unit tests, `ruff` linting, and GitHub Actions checks across Python code, Fabric artifacts, and Airflow configs.
 - **Serving:** Power BI semantic model in Direct Lake mode with a three-page report.
 
 ## Architecture
@@ -23,45 +25,54 @@ End-to-end data engineering project: real-time crypto market data from Finnhub i
 
 ### Data flow
 
-| Stage           | What happens                                                                                                                                                                  |
-| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Producer        | `finnhub_crypto_producer.py` subscribes to Finnhub trades, builds 1-minute candles per symbol and sends them to Event Hubs (one fixed partition per symbol).                  |
-| Consumer        | `eventhub_to_lake_consumer.py` reads Event Hubs with checkpoints in Blob Storage, buffers candles and writes JSONL files to the ADLS Gen2 `source` container every 5 minutes. |
-| Airflow         | DAGs call Finnhub news (hourly) and Marketaux sentiment (daily) and upload JSONL files to the same `source` container.                                                        |
-| Fabric shortcut | The Lakehouse exposes the ADLS `source` container through a shortcut (no copy).                                                                                               |
-| Bronze          | Raw data as Delta tables, plus ingestion timestamp and source-file lineage columns. Duplicates are kept.                                                                      |
-| Silver          | Cleaned, typed and deduplicated data. Rows missing critical fields go to quarantine tables.                                                                                   |
-| Gold            | Feature tables, daily aggregates, news and sentiment by asset, and dimensions.                                                                                                |
-| Power BI        | Direct Lake semantic model and report on top of gold.                                                                                                                         |
+| Stage           | What happens                                                                                                                                                                                             |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Producer        | `finnhub_crypto_producer.py` subscribes to Finnhub trades, builds 1-minute candles per symbol via `CandleAggregator` and sends them to Event Hubs (one fixed partition per symbol).                      |
+| Consumer        | `eventhub_to_lake_consumer.py` buffers candles in `CandleBatchBuffer`, flushes JSONL files to the ADLS Gen2 `source` container every 5 minutes, and updates Blob Storage checkpoints only after upload. |
+| Airflow         | DAGs call Finnhub news (hourly) and Marketaux sentiment (daily) and upload JSONL files to the same `source` container.                                                                                   |
+| Fabric shortcut | The Lakehouse exposes the ADLS `source` container through a shortcut (no copy).                                                                                                                          |
+| Bronze          | Raw data as Delta tables, plus ingestion timestamp and source-file lineage columns. Duplicates are kept.                                                                                                 |
+| Silver          | Cleaned, typed and deduplicated data. Rows missing critical fields go to quarantine tables.                                                                                                              |
+| Gold            | Feature tables, daily aggregates, news and sentiment by asset, and dimensions.                                                                                                                           |
+| Power BI        | Direct Lake semantic model and report on top of gold.                                                                                                                                                    |
 
 Candles run as a continuous streaming job. News and sentiment run through scheduled Fabric pipelines using `trigger(availableNow=True)`; Spark checkpoints track which files were already processed.
 
 ## Tech stack
 
-| Layer         | Tools                                                        |
-| ------------- | ------------------------------------------------------------ |
-| Sources       | Finnhub (WebSocket and REST), Marketaux (REST)               |
-| Messaging     | Azure Event Hubs, Azure Blob Storage (checkpoints)           |
-| Orchestration | Apache Airflow (Docker), Fabric Data Pipelines               |
-| Storage       | ADLS Gen2 (landing), Fabric Lakehouse / OneLake (Delta Lake) |
-| Processing    | PySpark, Spark Structured Streaming, Delta `MERGE`           |
-| Serving       | Power BI semantic model (Direct Lake)                        |
-| Tooling       | Python, uv, Docker, Git (Fabric Git integration)             |
+| Layer         | Tools                                                                  |
+| ------------- | ---------------------------------------------------------------------- |
+| Sources       | Finnhub (WebSocket and REST), Marketaux (REST)                         |
+| Messaging     | Azure Event Hubs, Azure Blob Storage (checkpoints)                     |
+| Orchestration | Apache Airflow (Docker), Fabric Data Pipelines                         |
+| Storage       | ADLS Gen2 (landing), Fabric Lakehouse / OneLake (Delta Lake)           |
+| Processing    | PySpark, Spark Structured Streaming, Delta `MERGE`                     |
+| Serving       | Power BI semantic model (Direct Lake)                                  |
+| Tooling       | Python, uv, Ruff, pytest, GitHub Actions, Docker, Git (Fabric Git sync) |
 
 ## Repository structure
 
 ```
 .
-├── airflow/                      # Airflow (Docker): news and sentiment ingestion DAGs
-├── fabric/                       # Fabric workspace items synced via Git (notebooks, pipelines, semantic model, report)
-├── plugins/                      # Airflow plugins
+├── .github/workflows/
+│   └── ci.yml                             # CI: Ruff, pytest, Fabric AST/JSON, Airflow DAG/Compose checks
+├── airflow/                               # Airflow (Docker): DAGs, docker-compose.yaml, requirements.txt
+├── docs/
+│   ├── images/                            # Architecture diagram and dashboard screenshots
+│   └── measures/                          # Fault-injection verification screenshots
+├── fabric/                                # Fabric workspace items synced via Git (notebooks, pipelines, semantic model, report)
+├── plugins/                               # Airflow plugins
 ├── src/crypto_pipeline/
 │   ├── ingestion/
 │   │   └── finnhub_crypto_producer.py     # Finnhub WebSocket -> 1-min candles -> Event Hubs
 │   └── streaming/
 │       └── eventhub_to_lake_consumer.py   # Event Hubs -> buffered JSONL -> ADLS Gen2
-├── .env.example                  # Required environment variables (no secrets)
-├── pyproject.toml
+├── tests/
+│   ├── test_producer.py                   # Unit tests for CandleAggregator and candle payload formatting
+│   └── test_consumer.py                   # Unit tests for CandleBatchBuffer and post-upload checkpointing
+├── .env.example                           # Required environment variables (no secrets)
+├── measurements.md                        # Benchmarked latency, recovery tests, reconciliation and caveats
+├── pyproject.toml                         # Dependencies, Ruff and pytest configuration
 ├── uv.lock
 ├── requirements.txt
 └── README.md
@@ -95,6 +106,21 @@ Tracked symbols: BTC, ETH, BNB, AVAX, LTC (Binance USDT pairs).
 **News:** news volume by day, asset and source, plus the latest headlines with links.
 
 ![News](docs/images/dashboard_news.png)
+
+## Measured results
+
+All checks below were measured on the author's own setup (small Microsoft Fabric capacity; producer, consumer and Airflow running intermittently on a local machine). Full SQL queries, screenshots and caveats are documented in [measurements.md](measurements.md).
+
+| Area                        | Observed result                                                                                                                                                       | Date                    |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| Idempotent replay           | Replaying 3 files (75 rows): Bronze +75 rows, Silver +0 rows, 0 Silver duplicates                                                                                     | 2026-11-06 / 2026-11-09 |
+| Consumer outage recovery    | Round 1 (before fix): 15 buffered candles lost. Round 2 (after checkpoint-after-upload fix, `03:15`–`03:35` UTC with 10m outage): **21/21 per symbol (105 total)**, 0 lost, 0 duplicates | 2026-11-11              |
+| Candle-to-Bronze latency    | Steady-state `p50 169 s`, `p95 290 s`, `max 292 s` (`n = 105`), bounded by the 5-minute batch flush                                                                   | 2026-11-06              |
+| Orchestrator runtime        | Consolidating two Sentiment Notebook activities (`7m16s`, hit HTTP 430) into one orchestrator notebook cut runtime to `4m04s` (~44% reduction, single run; News `3m42s`) | 2026-11-05              |
+| End-to-end reconciliation   | `1,479` Bronze rows -> `1,074` distinct Silver rows (`838` candles over `653,634` ticks, `212` news, `24` sentiment); `405` dupes merged, `0` missing valid keys, `0` quarantined | 2026-11-11              |
+| Delta `OPTIMIZE` (`silver.candles`) | `14` -> `3` files (-78.6%, 1 file per `date` partition); `143,517` -> `58,265` bytes (-59.4%)                                                                         | 2026-11-11              |
+
+Verification screenshots for the Round 2 recovery test: [candle count check](docs/measures/round2_recovery.png) and [duplicate check](docs/measures/round2_duplicates.png).
 
 ## Getting started
 
@@ -133,8 +159,6 @@ uv run python src/crypto_pipeline/streaming/eventhub_to_lake_consumer.py
 
 ### Run Airflow
 
-<!-- TODO: confirm the path of the compose file -->
-
 ```bash
 cd airflow
 docker compose up -d
@@ -151,14 +175,29 @@ Then create the `adls2_connection` connection and enable the news and sentiment 
 5. Run the candles streaming notebook (long-running).
 6. Create the Direct Lake semantic model and the Power BI report.
 
+## Testing & CI
+
+Install dev dependencies and run the linter and unit tests locally:
+
+```bash
+uv sync --locked --group dev
+uv run ruff check .
+uv run pytest -v
+```
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on pushes to `main`, pull requests targeting `main`, and manual dispatches across three jobs:
+
+- **`lint-and-test`:** runs `uv run ruff check .` and `uv run pytest -v` (12 unit tests covering `CandleAggregator`, `build_candle_payload`, `CandleBatchBuffer` upload/checkpoint ordering, and JSONL batch writes).
+- **`validate-fabric`:** parses Python notebooks under `fabric/` via `ast.parse` and validates JSON/config files (`.json`, `.pbir`, `.pbism`, `.platform`, `.schedules`).
+- **`validate-airflow`:** verifies `airflow/requirements.txt` is clean UTF-8 without NUL bytes, checks DAG syntax with `python3 -m py_compile airflow/dags/*.py`, and validates `airflow/docker-compose.yaml` with `docker compose config -q`.
+
 ## Design decisions
 
-- **Event-time candles:** candles are grouped by trade timestamp with a short grace period for late ticks, and one fixed partition per symbol preserves per-symbol ordering.
-- **Buffer and flush:** the consumer writes one file per flush interval instead of one file per candle.
-- **At-least-once delivery, idempotent writes:** duplicates are expected, so silver uses `MERGE` on `(symbol, minute_ms, interval)` and similar keys for news and sentiment.
-- **Raw bronze, strict silver:** bronze keeps everything. Silver handles nulls, types and duplicates. Invalid rows go to quarantine tables instead of being dropped silently, and an OHLC validity flag is kept for audit.
-- **Right run mode per source:** continuous streaming for candles, scheduled `availableNow` runs for news and sentiment.
-- **Streaming-first medallion:** a single processing path, so the design is closer to a Kappa architecture than a classic Lambda architecture.
+- **Event-time candles:** `CandleAggregator` groups ticks by trade timestamp with a 2-second grace period, drops ticks arriving for already-flushed minutes while counting `late_ticks_dropped`, and maps each symbol to a fixed Event Hubs partition to preserve per-symbol ordering.
+- **Checkpoint-after-upload at-least-once consumer:** `CandleBatchBuffer` batches events in memory and calls `update_checkpoint` per partition only after the ADLS Gen2 upload succeeds (via `asyncio.to_thread` for local file writes). If an upload fails, staged rows and partition checkpoints are restored for retry; if the consumer crashes after upload before checkpointing, duplicates are absorbed downstream.
+- **Idempotent Silver writes:** bronze preserves all raw messages; silver uses Delta `MERGE` on `(symbol, minute_ms, interval)` for candles and analogous keys for news and sentiment. Invalid rows route to quarantine tables and OHLC validity flags are preserved for audit.
+- **Right run mode per source:** continuous streaming for candles, scheduled `availableNow` runs for news and sentiment, and a single orchestrator notebook using `notebookutils.notebook.run` to avoid overlapping Spark session capacity errors (`HTTP 430`).
+- **Streaming-first medallion:** a single processing path, closer to a Kappa architecture than a classic Lambda architecture.
 - **Sentiment source:** Marketaux replaced Alpha Vantage after the Alpha Vantage news sentiment endpoint became premium.
 
 ## Known limitations
